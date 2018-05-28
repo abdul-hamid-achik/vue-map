@@ -1,0 +1,203 @@
+{
+  "center": [
+    -97.566735,
+    32.740584
+  ],
+  "center_lat": 32.740288,
+  "center_lon": -97.568164,
+  "colors": {
+    "approved": "#F4CE42",
+    "arc": "#F4CE42",
+    "arc-approved": "#F4CE42",
+    "arc-denied": "#F4CE42",
+    "arc-pending": "#33A02C",
+    "available": "#A6CEE3",
+    "closed": "#1F78B4",
+    "denied": "#E31A1C",
+    "foreground": "#FFFFFF",
+    "pending": "#33A02C",
+    "reserved": "#33A02C",
+    "sold": "#FB9A99",
+    "spec": "#E31A1C"
+  },
+  "description": false,
+  "filter": {
+    "options": {
+      "builders": [
+        {
+          "id": 1,
+          "label": "David Weekley Homes"
+        },
+        {
+          "id": 2,
+          "label": "Drees Homes"
+        },
+        {
+          "id": 3,
+          "label": "Village Homes"
+        },
+        {
+          "id": 4,
+          "label": "Highland Homes"
+        },
+        {
+          "id": 5,
+          "label": "BSB"
+        },
+        {
+          "id": 6,
+          "label": "Toll Brothers"
+        },
+        {
+          "id": 7,
+          "label": "RPG"
+        },
+        {
+          "id": 8,
+          "label": "HGC Development"
+        },
+        {
+          "id": 9,
+          "label": "MK Homes"
+        },
+        {
+          "id": 10,
+          "label": "Britton Homes"
+        },
+        {
+          "id": 11,
+          "label": "Parkhill Homes"
+        },
+        {
+          "id": 12,
+          "label": "Glendarroch Homes"
+        }
+      ],
+      "sizes": [
+        {
+          "id": 35,
+          "label": 35
+        },
+        {
+          "id": 35,
+          "label": 35
+        },
+        {
+          "id": 50,
+          "label": 50
+        },
+        {
+          "id": 50,
+          "label": 50
+        },
+        {
+          "id": 50,
+          "label": 50
+        },
+        {
+          "id": 50,
+          "label": 50
+        },
+        {
+          "id": 60,
+          "label": 60
+        },
+        {
+          "id": 60,
+          "label": 60
+        },
+        {
+          "id": 60,
+          "label": 60
+        },
+        {
+          "id": 60,
+          "label": 60
+        },
+        {
+          "id": 70,
+          "label": 70
+        },
+        {
+          "id": 70,
+          "label": 70
+        },
+        {
+          "id": 70,
+          "label": 70
+        }
+      ],
+      "statuses": [
+        {
+          "id": 1,
+          "label": "Available"
+        },
+        {
+          "id": 2,
+          "label": "Sold"
+        },
+        {
+          "id": 3,
+          "label": "Spec"
+        },
+        {
+          "id": 4,
+          "label": "Reserved"
+        },
+        {
+          "id": 5,
+          "label": "Closed"
+        },
+        {
+          "id": 6,
+          "label": "ARC"
+        }
+      ],
+      "styles": [
+        {
+          "id": 1,
+          "label": "Arts & Crafts"
+        },
+        {
+          "id": 2,
+          "label": "Colonial Revival"
+        },
+        {
+          "id": 3,
+          "label": "Mediterranean"
+        },
+        {
+          "id": 4,
+          "label": "Texas Vernacular"
+        },
+        {
+          "id": 5,
+          "label": "Transitional"
+        },
+        {
+          "id": 6,
+          "label": "Tudor"
+        },
+        {
+          "id": 7,
+          "label": "Traditional"
+        },
+        {
+          "id": 8,
+          "label": "Tudor"
+        },
+        {
+          "id": 9,
+          "label": "Arts and Crafts"
+        }
+      ]
+    }
+  },
+  "lookup_column": "sku",
+  "search": false,
+  "shareable": false,
+  "tiles_loader": true,
+  "title": false,
+  "token": "pk.eyJ1IjoiYWxhc3NldHRlciIsImEiOiI3andLQ1MwIn0.1q6yuZJaMCnAW0cm_6vy_A",
+  "zoom": 17
+}
