@@ -17,12 +17,12 @@
                 <div class="tab-pane active" id="homesites">
                     <div id="home-site-list" class="listings-grid-wrapper" :class="{'pull-left': viewType == 'mapViewActive'}">
                       <div v-if="isHomeSitesTabActive" :class="{'grid-column-config': viewType == 'gridViewActive'}">
-                        <div v-for="record in paginated(available)" :key="record.id">
+                        <div v-for="record in viewType == 'mapViewActive' ? available : paginated(available)" :key="record.id">
                             <HomeSitesListItem :record="record"></HomeSitesListItem>
                         </div>
                       </div>
                       <div v-else :class="{'grid-column-config': viewType == 'gridViewActive'}">
-                        <div v-for="record in paginated(spec)" :key="record.id">
+                        <div v-for="record in viewType == 'mapViewActive' ? spec : paginated(spec)" :key="record.id">
                             <HomesListItem :record="record"></HomesListItem>
                         </div>
                       </div>
