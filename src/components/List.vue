@@ -4,7 +4,7 @@
         <div id="listingstabs" style="">
             <ul class="nav nav-pills homes-sites-toggles" :class="{ 'grid-view-tabs': viewType == 'gridViewActive' }"  >
                 <li v-bind:class="{ active: isHomeSitesTabActive }" data-name="home-sites" >
-                    <a id="home-sites-button" v-on:click="toggleClick">Home Sites <span class="grid-view-toggle-number" v-if="viewType == 'gridViewActive'">{{available.length}}</span></a>
+                    <a id="home-sites-button" v-on:click="toggleClick">Home Sites <span class="grid-view-toggle-number" v-if="viewType == 'gridViewActive'">{{ available.length }}</span></a>
                 </li>
                 <li v-bind:class="{ active: isHomesTabActive }" data-name="homes">
                     <a id="homes-button" v-on:click="toggleClick">Homes <span class="grid-view-toggle-number" v-if="viewType == 'gridViewActive'">{{ spec.length }}</span></a>

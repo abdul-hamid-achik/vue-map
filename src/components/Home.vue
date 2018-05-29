@@ -1,7 +1,7 @@
 <template>
     <div class="content">
-        <FilterNavbar :records="records"></FilterNavbar>
-        <Map :viewType="viewType" :records="records" :filteredRecords="filteredRecords" :totalLength="records.length"></Map>
+        <FilterNavbar :records="records" :filteredRecords="filteredRecords" :totalLength="records.length"></FilterNavbar>
+        <Map :viewType="viewType" :records="records" :filteredRecords="filteredRecords"></Map>
         <List :viewType="viewType" :records="filteredRecords"></List>
     </div>
 </template>
@@ -47,7 +47,7 @@ export default {
 
     filters: function (newValue, oldValue) {
       var buildersFilters = newValue.map(item => item.type == "builders" ? item.label : null).filter(item => item)
-      var stylesFilters = newValue.map(item => item.type == "styles" ? item.label : null).filter(item => item)
+      var stylesFilters = newValue.map(item => item.type == "architecture" ? item.label : null).filter(item => item)
       var bedsFilters = newValue.map(item => item.type == "beds" ? item.label : null).filter(item => item)
       var priceFilter = newValue.map(item => {
         if (item.type == "price") {
@@ -67,6 +67,8 @@ export default {
           buildersFilterCheck = buildersFilters.filter(builder => record.builder && record.builder.label == builder).length > 0
         }
 
+        console.log(stylesFilters)
+        console.log(record.style)
         if (stylesFilters.length > 0) {
           stylesFilterCheck =  stylesFilters.filter(style => record.style && record.style.label == style).length > 0
         }

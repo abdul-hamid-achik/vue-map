@@ -1,6 +1,5 @@
 <template>
   <div v-if="viewType == 'mapViewActive'" class="map-container col-xs-9 padding-0">
-      <Tags :currentlyShowing="filteredRecords.length" :totalLength="totalLength"></Tags>
       <div class="nav-row sorting-row">
       </div>
       <div id="map"></div>
@@ -8,7 +7,6 @@
 </template>
 
 <script>
-import Tags from '@/components/Tags'
 import Vue from 'vue'
 import config from '@/config'
 import {eventBus} from '../main'
@@ -16,7 +14,6 @@ import MapTooltip from './MapTooltip'
 export default {
   props: ['records', 'filteredRecords', 'totalLength', 'viewType'],
   name: 'Map',
-  components: {Tags},
 
   data () {
     return {
@@ -90,6 +87,7 @@ export default {
     eventBus.$on("homeUnhovered", (data) => {
         this.clearMapSelection()
     })
+    eventBus.$on("clearAllFilters", _ => this.clearFilteredLotsFromMap())
   },
   
   watch: {
@@ -112,19 +110,12 @@ export default {
       if (newData.length == this.records.length) {
         return
       }
-
+      this.clearFilteredLotsFromMap()
       if (this.filterTimeout) {
         clearTimeout(this.filterTimeout)
       }
       this.filterTimeout = setTimeout(_ => {
-        if (this.map.getSource('filtered-records')) {
-          this.map.removeLayer('filtered-records-fill')
-          this.map.removeLayer('filtered-records-border')
-          this.map.removeSource('filtered-records')
-        }
-        console.log(this.filteredRecords.length, newData.length)
         var params = this.generateMapData(this.filteredRecords)
-        console.log(params)
         this.map.addSource('filtered-records', params)
         var shape = {
           id: 'filtered-records-fill',
@@ -151,6 +142,13 @@ export default {
   },
 
   methods: {
+    clearFilteredLotsFromMap() {
+      if (this.map && this.map.getSource('filtered-records')) {
+        this.map.removeLayer('filtered-records-fill')
+        this.map.removeLayer('filtered-records-border')
+        this.map.removeSource('filtered-records')
+      }
+    },
     generateMapData(records) {
       var recordsList = records.slice(0)
       var features = []

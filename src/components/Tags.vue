@@ -22,7 +22,6 @@ export default {
   components: {InputTag},
   mounted() {
   	eventBus.$on('selectedOption', (value) => {
-      console.log(value)
       this.oldArray = this.tagsArray.slice(0)
       this.tagsArray.push(value.label)
     })
@@ -105,6 +104,10 @@ export default {
     position: relative;
     top: -1px;
 
+  }
+  
+  .col-md-10 {
+    height: 43px;
   }
 }
 .new-tag {

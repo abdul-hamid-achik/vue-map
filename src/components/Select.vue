@@ -6,7 +6,7 @@
     </a>
 
     <ul :id="label" class="dropdown-menu" v-if="showList" @mouseenter="mouseEnterHandler" @mouseleave="mouseLeaveHandler">
-      <li class="filter-checkbox" v-for="(item, index) in options" :key="index">
+      <li class="filter-checkbox" v-for="(item, index) in (label != 'price' ? sortAlph(options) : options)" :key="index">
         <input 
           type="checkbox" 
           :id="index + '_' + label + '_option'" 
@@ -88,20 +88,23 @@ export default {
   	mouseLeaveHandler (event) {
   		this.clearTimeoutHandler()
   		this.leaveTimeout = setTimeout(() => this.showList = false, 100)
-  	}
+  	},
+    sortAlph: function (values) {
+      var data = values.slice(0)
+      return data.sort(function(a, b){
+        if(a < b) return -1;
+        if(a > b) return 1;
+        return 0;
+      })
+    }
   },
   filters: {
 	  capitalize: function (value) {
 	    if (!value) return ''
 	    value = value.toString()
 	    return value.charAt(0).toUpperCase() + value.slice(1)
-	  }
+	  },
   },
-  watch: {
-    selectedOptions: function (newValue, oldValue) {
-      // console.log(newValue)
-    }
-  }
 }
 </script>
 

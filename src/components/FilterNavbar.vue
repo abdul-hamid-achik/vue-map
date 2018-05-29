@@ -1,46 +1,51 @@
 <template>
-  <nav id="header" class="navbar navbar-default" role="navigation">
-    <ul class="nav navbar-nav navbar-left">
-      <Select :options="pricesList" label="price" single="true"></Select>
-      <form class="navbar-form navbar-left bedrooms">
-          <p class="navbar-text navbar-left">Bedrooms</p>
+  <div>
+    <nav id="header" class="navbar navbar-default" role="navigation">
+      <ul class="nav navbar-nav navbar-left">
+        <Select :options="pricesList" label="price" single="true"></Select>
+        <form class="navbar-form navbar-left bedrooms">
+            <p class="navbar-text navbar-left">Bedrooms</p>
+        </form>
+
+        <form class="navbar-form navbar-left border-right" role="search">
+            <div class="btn-toolbar" aria-label="Toolbar with button groups" role="toolbar">
+                <div id="beds" class="btn-group" role="group">
+                    <button data-field="beds" data-value="0" type="button" :value="0" @click="handleBedClick(0)" class="btn btn-icon btn-default btn-outline" :class="{ active: bedSelectedButton == 0 }">All</button>
+                    <button data-field="beds" data-value="number" type="button" :value="number" @click="handleBedClick(number)" class="btn btn-icon btn-default btn-outline" :class="{ active: bedSelectedButton == number }" v-for="number in bedsList">+{{number}}</button>
+                </div>
+            </div>
+        </form>
+
+        <Select :options="buildersList" label="builders"></Select>
+        <Select :options="stylesList" label="architecture"></Select>
+        <li class="pull-right clear-filters-btn-container" role="search">
+          <a id="clear-filters-btn" class="" @click="clearAllFilters()">Clear Filters <i class="icon-w-clear-search"></i> </a>
+        </li>
+      </ul>
+
+      <form class="navbar-form navbar-right" role="search">
+        <button type="button" class="btn btn-icon btn-default btn-outline " data-type="fullscreen" data-toggle="tooltip" data-placement="bottom" title="" id="fullscreen-button" @click="requestFullscreen()" data-original-title="Fullscreen">
+            <i class="icon-w-full-screen"></i>
+        </button>
       </form>
+      <ul class="nav navbar-nav app-view-container">
+        <li class="app-view-button"><a :class="{ active: mapViewActive }" @click="changeView('map')"><i class="fa fa-map"></i></a></li>
+        <li class="app-view-button"><a :class="{ active: gridViewActive }" @click="changeView('grid')"><i class="fa fa-th"></i></a></li>
+        <li class="app-view-button"><a :class="{ active: tableViewActive }" @click="changeView('table')"><i class="fa fa-table"></i></a></li>
+      </ul>
+    </nav>
 
-      <form class="navbar-form navbar-left border-right" role="search">
-          <div class="btn-toolbar" aria-label="Toolbar with button groups" role="toolbar">
-              <div id="beds" class="btn-group" role="group">
-                  <button data-field="beds" data-value="0" type="button" :value="0" @click="handleBedClick(0)" class="btn btn-icon btn-default btn-outline" :class="{ active: bedSelectedButton == 0 }">All</button>
-                  <button data-field="beds" data-value="number" type="button" :value="number" @click="handleBedClick(number)" class="btn btn-icon btn-default btn-outline" :class="{ active: bedSelectedButton == number }" v-for="number in bedsList">+{{number}}</button>
-              </div>
-          </div>
-      </form>
-
-      <Select :options="buildersList" label="builders"></Select>
-      <Select :options="stylesList" label="architecture"></Select>
-      <li class="pull-right clear-filters-btn-container" role="search">
-        <a id="clear-filters-btn" class="" @click="clearAllFilters()">Clear Filters <i class="icon-w-clear-search"></i> </a>
-      </li>
-    </ul>
-
-    <form class="navbar-form navbar-right" role="search">
-      <button type="button" class="btn btn-icon btn-default btn-outline " data-type="fullscreen" data-toggle="tooltip" data-placement="bottom" title="" id="fullscreen-button" @click="requestFullscreen()" data-original-title="Fullscreen">
-          <i class="icon-w-full-screen"></i>
-      </button>
-    </form>
-    <ul class="nav navbar-nav app-view-container">
-      <li class="app-view-button"><a :class="{ active: mapViewActive }" @click="changeView('map')"><i class="fa fa-map"></i></a></li>
-      <li class="app-view-button"><a :class="{ active: gridViewActive }" @click="changeView('grid')"><i class="fa fa-th"></i></a></li>
-      <li class="app-view-button"><a :class="{ active: tableViewActive }" @click="changeView('table')"><i class="fa fa-table"></i></a></li>
-    </ul>
-  </nav>
+    <Tags :currentlyShowing="filteredRecords.length" :totalLength="totalLength"></Tags>
+  </div>
 </template>
 <script>
+import Tags from '@/components/Tags'
 import Select from './Select'
 import {eventBus} from '../main'
 export default {
-  props: ['records', 'viewType'],
+  props: ['records', 'viewType', 'filteredRecords', 'totalLength'],
   name: 'FilterNavbar',
-  components: {Select},
+  components: {Select, Tags},
   data () {
     return {
       pricesList: [],
@@ -61,7 +66,7 @@ export default {
       this.buildersList = [...new Set(this.records.map(record => record.builder ? record.builder.label : null))].filter(label => label)
       this.stylesList = [...new Set(this.records.map(record => record.style ? record.style.label : null))].filter(label => label)
       this.pricesList = this.generateRanges([...new Set(this.records.map(record => record.sale ? record.sale.price : null))].filter(price => price).sort())
-      this.bedsList = [...new Set(this.records.map(record => { return record.beds == "1-10" ? 1 : record.beds }))].sort()
+      this.bedsList = [...new Set(this.records.map(record => { return record.beds > 2 ? record.beds : null }))].filter(bed => bed).sort((a,b) => a - b)
     }
   },
   methods: {
