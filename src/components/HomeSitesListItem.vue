@@ -1,5 +1,5 @@
 <template>
-    <div class="home-site-list-item" v-on:mouseover="mouseOverHandler" v-on:mouseleave="mouseLeaveHandler">
+    <div class="home-site-list-item" v-on:mouseover="mouseOverHandler" v-on:mouseleave="mouseLeaveHandler" @click="clickHandler()">
         <div class="home-site-list-container animation-scale-up">
             <div class="record" lot="record.id">
                 <img v-bind:src="record.photo" alt="" >
@@ -34,6 +34,9 @@ export default {
     }
   },
   methods: {
+    clickHandler() {
+      this.$router.push('/' + this.record.id)
+    },
     mouseOverHandler() {
         eventBus.$emit('homeHovered', this.record)
     },

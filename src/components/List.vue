@@ -4,10 +4,10 @@
         <div id="listingstabs" style="">
             <ul class="nav nav-pills homes-sites-toggles" :class="{ 'grid-view-tabs': viewType == 'gridViewActive' }"  >
                 <li v-bind:class="{ active: isHomeSitesTabActive }" data-name="home-sites" >
-                    <a id="home-sites-button" v-on:click="toggleClick">Home Sites <span class="grid-view-toggle-number" v-if="viewType == 'gridViewActive'">{{ available.length }}</span></a>
+                    <a id="home-sites-button" v-on:click="toggleClick">Home Sites <span class="grid-view-toggle-number">{{ available.length }}</span></a>
                 </li>
                 <li v-bind:class="{ active: isHomesTabActive }" data-name="homes">
-                    <a id="homes-button" v-on:click="toggleClick">Homes <span class="grid-view-toggle-number" v-if="viewType == 'gridViewActive'">{{ spec.length }}</span></a>
+                    <a id="homes-button" v-on:click="toggleClick">Homes <span class="grid-view-toggle-number">{{ spec.length }}</span></a>
                 </li>
                 <li v-if="viewType == 'gridViewActive'">
                   <paginate ref="paginate" :click-handler="paginatorClickHandler" container-class="pagination" :page-count="Math.round(selectedDataSource.length / 9)" :page-class="'page-item'" :page-link-class="'page-item-link'"></paginate>
@@ -101,6 +101,11 @@
               <span class="price-label">Starting from</span>
             </template>
           </table-column>
+          <table-column>
+            <template>
+              <button @click="clickHandler" class="btn btn-default">More info</button>
+            </template>
+          </table-column>
         </table-component>
       </div>
     </div>
@@ -146,7 +151,10 @@ export default {
       this.selectedDataSource = this.isHomeSitesTabActive ? this.available : this.spec
     },
   },
-  methods: {
+  methods: {    
+    clickHandler() {
+      this.$router.push('/' + this.record.id)
+    },
     paginatorClickHandler(number) {
       this.currentPage = number
     },
@@ -193,8 +201,7 @@ export default {
         if (record.model) {
             continue
         }
-
-        if (!record.spec || !record.arc || !record.model) {
+        if (!record.spec || !record.arc) {
             available.push(record)
         }
       }

@@ -17,7 +17,7 @@
                           <span class="first-row-data" v-if="prettySqft">{{ prettySqft }} Sq Ft</span>
                         </div>
                         <div class="row">{{ builder }}</div>
-                        <div class="row"><button class="btn btn-default more-info">More Info</button></div>
+                        <div class="row"><button @click="clickHandler()" class="btn btn-default more-info">More Info</button></div>
                     </div>
                 </div>
             </div>
@@ -42,6 +42,11 @@ export default {
       prettyPrice: this.record.prettyPrice
     }
   },
+  methods: {
+    clickHandler() {
+      this.$router.push('/' + this.record.id)
+    }
+  }
 }
 </script>
 
