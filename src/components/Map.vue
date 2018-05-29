@@ -215,8 +215,15 @@ export default {
     },
     bindEvents() {
       this.map.on("mousemove", "shape", (e) => {
-        var id = e.features[0].properties.id
+        var feature = e.features[0]
+        var id = feature.properties.id
         this.map.setFilter("hover", ["==", "id", id])
+        this.mapboxPopup
+          .setLngLat(eval(feature.properties.xy).reverse())
+          .setHTML('<div id="popup-content"></div>')
+          .addTo(this.map)
+        var record = this.modifiedRecords.filter(record => record.id == id)[0]
+        new this.popup({ propsData: { record: record }}).$mount('#popup-content')
       })
 
       this.map.on("mouseleave", "shape", (e) => {
@@ -228,16 +235,7 @@ export default {
         this.map.getCanvas().style.cursor = "pointer"
 
       })
-      this.map.on("mouseenter", "shape", (e) => {
-        var feature = e.features[0]
-        var id = feature.properties.id
-        this.mapboxPopup
-          .setLngLat(eval(feature.properties.xy).reverse())
-          .setHTML('<div id="popup-content"></div>')
-          .addTo(this.map)
-        var record = this.modifiedRecords.filter(record => record.id == id)[0]
-        new this.popup({ propsData: { record: record }}).$mount('#popup-content')
-      })
+
       this.map.on("mouseleave", "hover", (e) => {
         this.map.getCanvas().style.cursor = ""
       })
