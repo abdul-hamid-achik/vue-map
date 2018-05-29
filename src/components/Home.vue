@@ -66,9 +66,7 @@ export default {
         if (buildersFilters.length > 0) {
           buildersFilterCheck = buildersFilters.filter(builder => record.builder && record.builder.label == builder).length > 0
         }
-
-        console.log(stylesFilters)
-        console.log(record.style)
+        
         if (stylesFilters.length > 0) {
           stylesFilterCheck =  stylesFilters.filter(style => record.style && record.style.label == style).length > 0
         }

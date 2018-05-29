@@ -87,7 +87,12 @@ export default {
     eventBus.$on("homeUnhovered", (data) => {
         this.clearMapSelection()
     })
-    eventBus.$on("clearAllFilters", _ => this.clearFilteredLotsFromMap())
+    eventBus.$on('unselectedOption', function () {
+      this.clearFilteredLotsFromMap()
+    }.bind(this))
+    eventBus.$on("clearAllFilters", function () {
+      this.clearFilteredLotsFromMap()
+    }.bind(this))
   },
   
   watch: {
@@ -143,6 +148,7 @@ export default {
 
   methods: {
     clearFilteredLotsFromMap() {
+      console.log(this.map, this.map.getSource('filtered-records'))
       if (this.map && this.map.getSource('filtered-records')) {
         this.map.removeLayer('filtered-records-fill')
         this.map.removeLayer('filtered-records-border')
