@@ -4,16 +4,16 @@
       <ul class="nav navbar-nav navbar-left">
         <Select :options="pricesList" label="price" single="true"></Select>
         <form class="navbar-form navbar-left bedrooms">
-            <p class="navbar-text navbar-left">Bedrooms</p>
+          <p class="navbar-text navbar-left">Bedrooms</p>
         </form>
 
         <form class="navbar-form navbar-left border-right" role="search">
-            <div class="btn-toolbar" aria-label="Toolbar with button groups" role="toolbar">
-                <div id="beds" class="btn-group" role="group">
-                    <button data-field="beds" data-value="0" type="button" :value="0" @click="handleBedClick(0)" class="btn btn-icon btn-default btn-outline" :class="{ active: bedSelectedButton == 0 }">All</button>
-                    <button data-field="beds" data-value="number" type="button" :value="number" @click="handleBedClick(number)" class="btn btn-icon btn-default btn-outline" :class="{ active: bedSelectedButton == number }" v-for="number in bedsList">+{{number}}</button>
-                </div>
+          <div class="btn-toolbar" aria-label="Toolbar with button groups" role="toolbar">
+            <div id="beds" class="btn-group" role="group">
+              <button data-field="beds" data-value="0" type="button" :value="0" @click="handleBedClick(0)" class="btn btn-icon btn-default btn-outline" :class="{ active: bedSelectedButton == 0 }">All</button>
+              <button data-field="beds" data-value="number" type="button" :value="number" @click="handleBedClick(number)" class="btn btn-icon btn-default btn-outline" :class="{ active: bedSelectedButton == number }" v-for="number in bedsList">+{{number}}</button>
             </div>
+          </div>
         </form>
 
         <Select :options="buildersList" label="builders"></Select>
@@ -25,7 +25,7 @@
 
       <form class="navbar-form navbar-right" role="search">
         <button type="button" class="btn btn-icon btn-default btn-outline " data-type="fullscreen" data-toggle="tooltip" data-placement="bottom" title="" id="fullscreen-button" @click="requestFullscreen()" data-original-title="Fullscreen">
-            <i class="icon-w-full-screen"></i>
+          <i class="icon-w-full-screen"></i>
         </button>
       </form>
       <ul class="nav navbar-nav app-view-container">
@@ -60,6 +60,11 @@ export default {
       gridViewActive: false,
       tableViewActive: false
     }
+  },
+  mounted() {
+    eventBus.$on('removedBedTag', function (value) {
+      this.handleBedClick(0)
+    }.bind(this))
   },
   watch: {
     records: function(oldValue, newValue) {

@@ -103,6 +103,7 @@ export default {
           var map = new mapboxgl.Map(config)
           this.map = map
           this.map.addControl(new mapboxgl.NavigationControl())
+          this.map.doubleClickZoom.disable()
           this.map.scrollZoom.disable()
           this.map.on('load', this.mapLoad)
         })
@@ -148,7 +149,6 @@ export default {
 
   methods: {
     clearFilteredLotsFromMap() {
-      console.log(this.map, this.map.getSource('filtered-records'))
       if (this.map && this.map.getSource('filtered-records')) {
         this.map.removeLayer('filtered-records-fill')
         this.map.removeLayer('filtered-records-border')

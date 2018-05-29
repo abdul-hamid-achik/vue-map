@@ -9,7 +9,7 @@
                     <div class="col-xs-8 text-left">
                         <div class="address">{{ record.label }}</div>
                         <div class="beds-bath">{{ record.beds }} Bed / {{record.baths }} Bath</div>
-                        <div class="builder">{{ record.builder.label }}</div>
+                        <div class="builder" v-if="record.builder">{{ record.builder.label }}</div>
                     </div>
                     <div class="col-xs-4 text-right">
                         <div class="price">{{ record.prettyPrice }}</div>
@@ -45,7 +45,7 @@ export default {
 
 <style lang="scss" scoped>
     .record {
-        width: 336px;
+        // width: 336px;
     }
     .address {
         font-size: 13px !important;

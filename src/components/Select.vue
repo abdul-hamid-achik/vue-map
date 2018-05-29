@@ -50,7 +50,8 @@ export default {
     eventBus.$on('unselectedOption', function (data) {
       var index = this.selectedOptions.indexOf(data.label)
       if (index != -1) {
-        var itemIndex = this.options.indexOf(data.label)
+        var options = this.label != "price" ? this.sortAlph(this.options) : this.options
+        var itemIndex = options.indexOf(data.label)
         this.selectedOptions.splice(index, 1)
         this.checkedOptions[itemIndex] = false
       }

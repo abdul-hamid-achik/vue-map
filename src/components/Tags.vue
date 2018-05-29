@@ -42,6 +42,9 @@ export default {
     deleteHandler(newTags, oldTags) {
       var deleted = oldTags.filter((obj) => newTags.indexOf(obj) == -1)
       if (deleted.length > 0) {
+        if (deleted.join(',').indexOf("bed") != -1) {
+          eventBus.$emit('removedBedTag')
+        }
         deleted.forEach(function (item) {
           eventBus.$emit('unselectedOption', { type: null, label: item })
         })
@@ -105,7 +108,7 @@ export default {
     top: -1px;
 
   }
-  
+
   .col-md-10 {
     height: 43px;
   }

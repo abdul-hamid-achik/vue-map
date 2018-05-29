@@ -66,7 +66,7 @@ export default {
         if (buildersFilters.length > 0) {
           buildersFilterCheck = buildersFilters.filter(builder => record.builder && record.builder.label == builder).length > 0
         }
-        
+
         if (stylesFilters.length > 0) {
           stylesFilterCheck =  stylesFilters.filter(style => record.style && record.style.label == style).length > 0
         }
@@ -74,12 +74,10 @@ export default {
         if (bedsFilters.length > 0 && !(record.beds && record.beds in bedsFilters)) {
           bedsFilterCheck = bedsFilters.filter(beds => {
             var numberOfBeds
-            // we check for the word bed
+            // need to cleanup
             if (beds.indexOf("1") != -1) {
-              // since the records that have one bed say 1-10 instead we are adding that to the filter
               numberOfBeds = beds.split('bed')[0].trim() + "-10"
             } else {
-              // otherwise we check for the word beds
               numberOfBeds = parseInt(beds.split('beds')[0].trim())
             }
             return numberOfBeds == record.beds
