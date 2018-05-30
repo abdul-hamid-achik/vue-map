@@ -11,6 +11,7 @@ import Vue from 'vue'
 import config from '@/config'
 import {eventBus} from '../main'
 import MapTooltip from './MapTooltip'
+import mapboxgl from 'mapbox-gl'
 export default {
   props: ['records', 'filteredRecords', 'totalLength', 'viewType'],
   name: 'Map',
