@@ -10,22 +10,65 @@
                     <a id="homes-button" v-on:click="toggleClick">Homes <span class="grid-view-toggle-number">{{ spec.length }}</span></a>
                 </li>
                 <li v-if="viewType == 'gridViewActive'">
-                  <paginate ref="paginate" :click-handler="paginatorClickHandler" container-class="pagination" :page-count="Math.round(selectedDataSource.length / 9)" :page-class="'page-item'" :page-link-class="'page-item-link'"></paginate>
                 </li>
             </ul>
             <div id="listings" class="tab-content clearfix">
                 <div class="tab-pane active" id="homesites">
                     <div id="home-site-list" class="listings-grid-wrapper" :class="{'pull-left': viewType == 'mapViewActive'}">
                       <div v-if="isHomeSitesTabActive" :class="{'grid-column-config': viewType == 'gridViewActive'}">
-                        <div v-for="record in viewType == 'mapViewActive' ? available : paginated(available)" :key="record.id">
+                        <div v-if="available.length > 0">
+                          <div v-for="record in available" :key="record.id">
                             <HomeSitesListItem :record="record"></HomeSitesListItem>
+                          </div>
+                        </div>
+                        <div v-else>
+                          <div class="homes-list-item">
+                            <div class="home-list-container animation-scale-up">
+                              <div class="record" lot="record.id">
+                                <div class="record-info" style="height:100%;">
+                                  <h4>No Listings Found.</h4>
+                                  <p> Unfortunately we couldn't find any listings that match your filters. You have a few options: </p> 
+                                  <ol>
+                                    <li>
+                                      Removing some of your applied filters.
+                                    </li>
+                                    <li>
+                                      Clear all filters. 
+                                    </li>
+                                  </ol>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                       <div v-else :class="{'grid-column-config': viewType == 'gridViewActive'}">
-                        <div v-for="record in viewType == 'mapViewActive' ? spec : paginated(spec)" :key="record.id">
+                        <div v-if="spec.length > 0">
+                          <div v-for="record in spec" :key="record.id">
                             <HomesListItem :record="record"></HomesListItem>
+                          </div>
                         </div>
-                      </div>
+                        <div v-else>
+                          <div class="homes-list-item">
+                            <div class="home-list-container animation-scale-up">
+                              <div class="record" lot="record.id">
+                                <div class="record-info" style="height:100%;">
+                                  <h4>No Listings Found.</h4>
+                                  <p> Unfortunately we couldn't find any listings that match your filters. You have a few options: </p> 
+                                  <ol>
+                                    <li>
+                                      Removing some of your applied filters.
+                                    </li>
+                                    <li>
+                                      Clear all filters. 
+                                    </li>
+                                  </ol>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -45,72 +88,115 @@
             <span class="grid-view-toggle-number">{{spec.length}}</span>
           </a>
         </li>
-        <li>
-          <paginate ref="paginate" :click-handler="paginatorClickHandler" container-class="pagination" :page-count="Math.round(selectedDataSource.length / 9)" :page-class="'page-item'" :page-link-class="'page-item-link'"></paginate>
-        </li>
       </ul>
       <div class="container">
-        <table-component :show-filter="false" :show-caption="false" :data="paginated(selectedDataSource)">
-          <table-column show="photo" label="Property">
-           <template slot-scope="row">
-              <div class="row">
-                <div class="col-md-4">
-                  <img  class="img-responsive" v-bind:src="row.photo">
-                </div>
-                <div class="col-md-8">
-                  <div class="address">
-                    {{ row.label }}
+        <div v-if="isHomesTabActive && !isHomeSitesTabActive">
+          <table-component :table-class="'homes-table'" :cache-key="'homes'" :key="'homes'" :show-filter="false" :show-caption="false" :data="spec">
+            <table-column show="photo" label="Property">
+             <template slot-scope="row">
+                <div class="row">
+                  <div class="col-md-4">
+                    <img  class="img-responsive" v-bind:src="row.photo">
                   </div>
-                  <div class="builder">
-                    {{ row.builder ? row.builder.label : '' }}
+                  <div class="col-md-8">
+                    <div class="address">
+                      {{ row.label }}
+                    </div>
+                    <div class="builder">
+                      {{ row.builder ? row.builder.label : '' }}
+                    </div>
                   </div>
                 </div>
-              </div>
-           </template>
-          </table-column>
-          <table-column show="style" label="Arch. Style">
-            <template slot-scope="row">
-              <span class="style">{{ row.style ? row.style.label : '' }}</span>
-            </template>
-          </table-column>
-          <table-column show="beds" label="Bed">
-            <template slot-scope="row">
-              <span class="beds">{{ row.beds }}</span>
-            </template>
-          </table-column>
-          <table-column show="baths" label="Bath">
-            <template slot-scope="row">
-              <span class="baths">{{ row.baths }}</span>
-            </template>
-          </table-column>
-          <table-column show="garage" label="Garage">
-            <template slot-scope="row">
-              <span class="garage">{{ row.garage }}</span>
-            </template>
-          </table-column>
-          <table-column show="status" label="Status">
-            <template slot-scope="row" label="Price">
-              <span class="status" v-if="row.status">
-                {{ row.status }}
-              </span>
-            </template>
-          </table-column>
-          <table-column show="price">
-            <template slot-scope="row">
-              <span class="pretty-price">{{ prettyPrice(row.price) }}</span>
-              <span class="price-label">Starting from</span>
-            </template>
-          </table-column>
-          <table-column>
-            <template>
-              <button @click="clickHandler" class="btn btn-default">More info</button>
-            </template>
-          </table-column>
-        </table-component>
+             </template>
+            </table-column>
+            <table-column show="style" label="Arch. Style">
+              <template slot-scope="row">
+                <span class="style">{{ row.style ? row.style.label : '' }}</span>
+              </template>
+            </table-column>
+            <table-column show="beds" label="Bed">
+              <template slot-scope="row">
+                <span class="beds">{{ row.beds }}</span>
+              </template>
+            </table-column>
+            <table-column show="baths" label="Bath">
+              <template slot-scope="row">
+                <span class="baths">{{ row.baths }}</span>
+              </template>
+            </table-column>
+            <table-column show="garage" label="Garage">
+              <template slot-scope="row">
+                <span class="garage">{{ row.garage }}</span>
+              </template>
+            </table-column>
+            <table-column show="status" label="Status">
+              <template slot-scope="row">
+                <div v-if="row.status">
+                  <span class="status">
+                    {{ row.status }}
+                  </span> - 
+                  <span class="date-available" v-if="row.spec && row.spec.available">
+                    {{ row.spec.available }}
+                  </span>
+                </div>
+                <div v-else>
+                  <span class="date-available" v-if="row.spec && row.spec.available">
+                    {{ row.spec.available }}
+                  </span>
+                </div>
+              </template>
+            </table-column>
+            <table-column show="price">
+              <template slot-scope="row">
+                <span class="pretty-price">{{ prettyPrice(row.price) }}</span>
+                <span class="price-label">Starting from</span>
+              </template>
+            </table-column>
+            <table-column>
+              <template slot-scope="row">
+                <button @click="clickHandler(row)" class="btn btn-default more-info">More info</button>
+              </template>
+            </table-column>
+          </table-component>
+        </div>
+        <div v-else>
+          <table-component :table-class="'home-sites-table'"  :cache-key="'homesites'" :key="'homesites'" :show-filter="false" :show-caption="false" :data="available">
+            <table-column show="photo" label="Property">
+             <template slot-scope="row">
+                <div class="row">
+                  <div class="col-md-4">
+                    <img  class="img-responsive" v-bind:src="row.photo">
+                  </div>
+                  <div class="col-md-8">
+                    <div class="address">
+                      {{ row.label }}
+                    </div>
+                    <div class="builder">
+                      {{ row.builder ? row.builder.label : '' }}
+                    </div>
+                  </div>
+                </div>
+             </template>
+            </table-column>
+            <table-column show="size" label="Lot Size">
+              <template slot-scope="row">
+                <span class="size">{{ row.size }}</span>
+              </template>
+            </table-column>
+            <table-column show="Price">
+              <template slot-scope="row">
+                <span class="pretty-price">{{ prettyPrice(row.price) }}</span>
+                <span class="price-label">Starting from</span>
+              </template>
+            </table-column>
+            <table-column>
+              <template slot-scope="row">
+                <button @click="clickHandler(row)" class="btn btn-default more-info">More info</button>
+              </template>
+            </table-column>
+          </table-component>
+        </div>
       </div>
-    </div>
-    <div v-else>
-      
     </div>
   </div>
 </template>
@@ -119,11 +205,10 @@
 import HomeSitesListItem from '@/components/HomeSitesListItem'
 import HomesListItem from '@/components/HomesListItem'
 import { TableComponent, TableColumn } from 'vue-table-component'
-import paginate from 'vuejs-paginate'
 export default {
   props: ['records', 'viewType'],
   name: 'List',
-  components: {HomeSitesListItem, HomesListItem, TableComponent, TableColumn, paginate},
+  components: {HomeSitesListItem, HomesListItem, TableComponent, TableColumn},
   data () {
     var data = {
       isHomeSitesTabActive: true,
@@ -131,7 +216,6 @@ export default {
       available: [],
       spec: [],
       model: [],
-      currentPage: 1,
       selectedDataSource: []
     }
     return data
@@ -144,19 +228,12 @@ export default {
       this.selectedDataSource = this.isHomeSitesTabActive ? this.available : this.spec
     },
     isHomeSitesTabActive: function (newData, oldData) {
-      this.currentPage = 1
-      if (this.$refs.paginate) {
-        this.$refs.paginate.selected = 0
-      }
       this.selectedDataSource = this.isHomeSitesTabActive ? this.available : this.spec
     },
   },
   methods: {    
-    clickHandler() {
-      this.$router.push('/' + this.record.id)
-    },
-    paginatorClickHandler(number) {
-      this.currentPage = number
+    clickHandler(record) {
+      this.$router.push('/' + record.id)
     },
     toggleClick (event) {
       switch (event.target.id) {
@@ -239,20 +316,15 @@ export default {
             }
 
             if (record.spec || record.arc) {
-                if (record.model || record.spec) {
-                    delete record.status
-                }
+                // if (record.model || record.spec) {
+                //     delete record.status
+                // }
 
                 specs.push(record)
             }
         }
         return specs
     },
-    paginated(records) {
-      var start =  (this.currentPage - 1) * 9, end = start + 9
-      return records.slice(start, end)
-    }
-
   }
 }
 </script>
@@ -318,6 +390,17 @@ export default {
       }
     }
   }
+}
+
+.more-info {
+  padding-top: 15px;
+}
+
+.date-available{
+  font-size: 11px;
+  font-weight: bold;
+  font-family: helvetica;
+
 }
 
 

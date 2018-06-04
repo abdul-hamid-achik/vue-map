@@ -180,7 +180,7 @@ body #app {
                   font-size: 10px;
                   background-color: #b0bfb0;
                   color: white;
-                  width: 100%;
+                  width: 70px;
                   display: inline-block;
                   text-align: center;
                   padding-top: 8px;

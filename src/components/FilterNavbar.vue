@@ -71,7 +71,7 @@ export default {
       this.buildersList = [...new Set(this.records.map(record => record.builder ? record.builder.label : null))].filter(label => label)
       this.stylesList = [...new Set(this.records.map(record => record.style ? record.style.label : null))].filter(label => label)
       this.pricesList = this.generateRanges([...new Set(this.records.map(record => record.sale ? record.sale.price : null))].filter(price => price).sort())
-      this.bedsList = [...new Set(this.records.map(record => { return record.beds > 2 ? record.beds : null }))].filter(bed => bed).sort((a,b) => a - b)
+      this.bedsList = [...new Set(this.records.map(record => { return record.beds > 2 && record.beds < 6 ? record.beds : null }))].filter(bed => bed).sort((a,b) => a - b)
     }
   },
   methods: {

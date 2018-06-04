@@ -229,7 +229,7 @@ export default {
 
       this.map.on("mouseleave", "shape", (e) => {
         this.map.setFilter("hover", ["==", "id", ""])
-        setTimeout(_ => this.mapboxPopup.remove(), 200)
+        setTimeout(_ => this.mapboxPopup.remove(), 300)
       })
 
       this.map.on("mouseenter", "hover", (e) => {
