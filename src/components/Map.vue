@@ -46,7 +46,7 @@ export default {
         return
       }
       this.clearMapSelection()
-      var center = [].concat(record.xy)
+      var center = [].concat(record.centerpoint)
 
       this.map.flyTo({
           center: center.reverse(),
@@ -220,7 +220,7 @@ export default {
         var id = feature.properties.id
         this.map.setFilter("hover", ["==", "id", id])
         this.mapboxPopup
-          .setLngLat(eval(feature.properties.xy).reverse())
+          .setLngLat(eval(feature.properties.xy))
           .setHTML('<div id="popup-content"></div>')
           .addTo(this.map)
         var record = this.modifiedRecords.filter(record => record.id == id)[0]
@@ -229,7 +229,7 @@ export default {
 
       this.map.on("mouseleave", "shape", (e) => {
         this.map.setFilter("hover", ["==", "id", ""])
-        setTimeout(_ => this.mapboxPopup.remove(), 300)
+        setTimeout(_ => this.mapboxPopup.remove(), 500)
       })
 
       this.map.on("mouseenter", "hover", (e) => {
@@ -331,13 +331,15 @@ export default {
 
     generateFeature (record) {
       var coordinates = this.cleanupCoordinates(record.polygon)
+      var xy = record.centerpoint.slice(0).reverse()
+      console.log(record)
       return {
         type: "Feature",
         properties: {
             id: record.id,
             sku: record.sku,
             color: record.color,
-            xy: record.xy,
+            xy: xy,
             status: record.status
         },
         geometry: {
@@ -348,8 +350,9 @@ export default {
     },
     cleanupCoordinates (polygon) {
       var coordinates = []
-      for (var j = 0; j < polygon.length; j++) {
-          coordinates.push(polygon[j].split(",").reverse())
+      let coordinatesList = polygon[0]
+      for (var j = 0; j < coordinatesList.length; j++) {
+          coordinates.push(coordinatesList[j].map(item => String(item)).reverse())
       }
       return [coordinates]
     },

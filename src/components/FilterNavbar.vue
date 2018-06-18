@@ -67,11 +67,11 @@ export default {
     }.bind(this))
   },
   watch: {
-    records: function(oldValue, newValue) {
-      this.buildersList = [...new Set(this.records.map(record => record.builder ? record.builder.label : null))].filter(label => label)
-      this.stylesList = [...new Set(this.records.map(record => record.style ? record.style.label : null))].filter(label => label)
-      this.pricesList = this.generateRanges([...new Set(this.records.map(record => record.sale ? record.sale.price : null))].filter(price => price).sort())
-      this.bedsList = [...new Set(this.records.map(record => { return record.beds > 2 && record.beds < 6 ? record.beds : null }))].filter(bed => bed).sort((a,b) => a - b)
+    records: function(newValue, oldValue) {
+      this.buildersList = [...new Set(newValue.map(record => record.builder ? record.builder.label : null))].filter(label => label)
+      this.stylesList = [...new Set(newValue.map(record => record.style ? record.style.label : null))].filter(label => label)
+      this.pricesList = this.generateRanges([...new Set(newValue.map(record => record.sale ? record.sale.price : null))].filter(price => price).sort())
+      this.bedsList = [...new Set(newValue.map(record => { return record.beds > 2 && record.beds < 6 ? record.beds : null }))].filter(bed => bed).sort((a,b) => a - b)
     }
   },
   methods: {

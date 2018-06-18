@@ -10,7 +10,7 @@
                     <div class="col-xs-8 text-left">
                         <div class="address">{{ record.label }}</div>
                         <div class="lot-size">Lot Size {{ record.size }}</div>
-                        <div class="builder" v-if="record.builder">{{ record.builder.label }}</div>
+                        <div class="builder" v-if="record.builder">{{ record.builder }}</div>
                     </div>
                     <div class="col-xs-4 text-right">
                         <div class="price">{{ record.prettyPrice }}</div>
@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     clickHandler() {
-      this.$router.push('/' + this.record.id)
+      eventBus.$emit('showSidePanel', this.record)
     },
     mouseOverHandler() {
         eventBus.$emit('homeHovered', this.record)

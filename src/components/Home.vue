@@ -3,12 +3,14 @@
         <FilterNavbar :records="records" :filteredRecords="filteredRecords" :totalLength="records.length"></FilterNavbar>
         <Map :viewType="viewType" :records="records" :filteredRecords="filteredRecords"></Map>
         <List :viewType="viewType" :records="filteredRecords"></List>
+        <modals-container/>
     </div>
 </template>
 
 <script>
 import Map from '@/components/Map'
 import FilterNavbar from '@/components/FilterNavbar'
+import SidePanel from '@/components/SidePanel'
 import List from '@/components/List'
 import {eventBus} from '../main'
 export default {
@@ -28,11 +30,26 @@ export default {
     eventBus.$on("changedView", data => {
       this.viewType = data.type
     })
+
     eventBus.$on("clearAllFilters", function () {
       this.filteredRecords = this.records.filter(_ => true)
     }.bind(this))
+
     this.$nextTick(_ => {
       this.viewType = 'mapViewActive'
+    })
+
+    eventBus.$on("showSidePanel", data => {
+      let url = "http://localhost:8000/api/projects/1/marketing_site/lots/" + data.id
+      this.$http.get(url).then(response => {
+        this.$modal.show(SidePanel, { 
+          record: response.body.lot
+        }, {
+          float: 'right',
+          width: '720px',
+          height: '100%',
+        })
+      })
     })
   },
   methods: {
@@ -105,6 +122,12 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="scss">
+.v--modal {
+  top: 0 !important;
+  left: 0 !important;
+  float: right;
+}
+
 
 </style>

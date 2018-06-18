@@ -26,6 +26,7 @@
 </template>
 
 <script>
+import {eventBus} from '../main'
 export default {
   props: ['record'],
   name: 'MapTooltip',
@@ -35,16 +36,16 @@ export default {
       label: this.record.label,
       size: this.record.size,
       model: this.record.model,
-      beds: this.record.bed,
+      beds: this.record.beds,
       baths: this.record.baths,
       prettySqft: this.record.sqft.toLocaleString(),
-      builder: this.record.builder ? this.record.builder.label : '',
-      prettyPrice: this.record.prettyPrice
+      builder: this.record.builder,
+      prettyPrice: this.record.price
     }
   },
   methods: {
     clickHandler() {
-      this.$router.push('/' + this.record.id)
+      eventBus.$emit('showSidePanel', this.record)
     }
   }
 }

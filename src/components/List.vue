@@ -205,6 +205,7 @@
 import HomeSitesListItem from '@/components/HomeSitesListItem'
 import HomesListItem from '@/components/HomesListItem'
 import { TableComponent, TableColumn } from 'vue-table-component'
+import {eventBus} from '../main'
 export default {
   props: ['records', 'viewType'],
   name: 'List',
@@ -233,7 +234,7 @@ export default {
   },
   methods: {    
     clickHandler(record) {
-      this.$router.push('/' + record.id)
+      eventBus.$emit('showSidePanel', this.record)
     },
     toggleClick (event) {
       switch (event.target.id) {
@@ -254,7 +255,7 @@ export default {
       var available = []
       for (var i = 0; i < records.length; i++) {
         var record = records[i]
-        if (record.sale || record.status == "Sold") {
+        if (record.sale_id || record.status == "Sold") {
             continue
         }
 
@@ -278,7 +279,7 @@ export default {
         if (record.model) {
             continue
         }
-        if (!record.spec || !record.arc) {
+        if (!record.spec_id || !record.arc_id) {
             available.push(record)
         }
       }
@@ -288,7 +289,7 @@ export default {
         var specs = []
         for (var i = 0; i < records.length; i++) {
             var record = records[i]
-            if (record.sale || record.status == "Sold") {
+            if (record.sale_id || record.status == "Sold") {
                 continue
             }
 
@@ -315,7 +316,7 @@ export default {
                 continue
             }
 
-            if (record.spec || record.arc) {
+            if (record.spec_id || record.arc_id) {
                 // if (record.model || record.spec) {
                 //     delete record.status
                 // }

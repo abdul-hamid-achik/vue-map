@@ -12,10 +12,5 @@ export default new Router({
       name: 'Home',
       component: Home
     },
-    {
-    	path: '/:lot_id',
-    	name: 'LotView',
-    	component: LotView
-    }
   ]
 })
