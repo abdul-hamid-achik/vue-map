@@ -332,7 +332,6 @@ export default {
     generateFeature (record) {
       var coordinates = this.cleanupCoordinates(record.polygon)
       var xy = record.centerpoint.slice(0).reverse()
-      console.log(record)
       return {
         type: "Feature",
         properties: {
