@@ -1,7 +1,7 @@
 <template>
 <div class="slide-panel slide-panel--from-right js-slide-panel-home">
     <div class="slide-panel__header">
-      <a href="#0" class="slide-panel__close js-slide-panel-close">Close</a>
+      <a @click="$emit('close')" class="slide-panel__close js-slide-panel-close">Close</a>
     </div>
     <div class="slide-panel__container">
       <div class="slide-panel__content">
@@ -14,10 +14,10 @@
               <h4 class="address">
                 {{ record.label }}
               </h4>
-              <p>{{record.beds }} Bed | {{ record.baths }} Bath | {{ record.garage }} Garage | {{ record.stories }} Stories</p>
+              <p>{{record.max_beds }} Bed | {{ record.max_baths }} Bath | {{ record.max_garage }} Garage | {{ record.stories }} Stories</p>
             </div>
             <div class="col-md-3">
-              <h4 class="price">${{ record.max_price }}
+              <h4 class="price">${{ record.min_price }}
               </h4>
               <p>
                 <em>Starting From</em>
@@ -78,10 +78,10 @@
                 <div class="data-text">
                   <p>{{ record.builder.model_home.street_address }}<br></span>{{ record.builder.model_home.city }}, {{ record.builder.model_home.state }}<span>{{ record.builder.model_home.zipcode }}</span></p>
                   <p>
-                    <a href="#" class="" target="_blank">Get Driving Directions</a>
+                    <a :href="'https://www.google.com/maps/dir/' + record.builder.model_home.directions" class="" target="_blank">Get Driving Directions</a>
                   </p>
                   <p>
-                    <a href="#" class="" target="_blank">Visit Website</a>
+                    <a :href="record.builder.website" class="" target="_blank">Visit Website</a>
                   </p>
                 </div>
               </div>
@@ -91,17 +91,8 @@
                 <span class="label-small">Model Hours</span>
                 <div class="data-text">
                   <ul>
-                    <li>
-                      <span>12:00 pm - 6:00 pm</span> Mon-Thurs
-                    </li>
-                    <li>
-                      <span>12:00 pm - 6:00 pm</span> Fri
-                    </li>
-                    <li>
-                      <span>12:00 pm - 6:00 pm</span> Sat
-                    </li>
-                    <li>
-                      <span>12:00 pm - 6:00 pm</span> Sun
+                    <li v-for="day, hours in this.fixDays(record.builder.schedule)">
+                      <span>{{hours}}</span> {{day}} 
                     </li>
                   </ul>
                 </div>
@@ -120,21 +111,47 @@ export default {
   name: 'SidePanel',
   props: ['record'],
   data () {
-  	console.log(this.record)
     return {
 
     }
+  },
+  methods: {
+    fixDays(schedule) {
+      let week_days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
+
+      let equal_week_days = week_days.filter(day => {
+        return schedule[day] == schedule['monday']
+      })
+
+      let new_schedule = {}
+
+      new_schedule[
+        equal_week_days[0].substring(0, 3) + " - " + equal_week_days[equal_week_days.length - 1].substring(0, 3)
+      ] = schedule[equal_week_days[0]]
+
+      Object.keys(schedule).forEach((day) => {
+        if (equal_week_days.indexOf(day) == -1 && day != "id") {
+          new_schedule[day] = schedule[day]
+        }
+      })
+      
+      return new_schedule
+
+    },
   }
 }
 </script>
 
 <style lang="scss" scoped>
 
+#builder-logo {
+  width: 100%;
+}
 
 .slide-panel::after {
   /* overlay layer */
   content: "";
-  position: absolute;
+  // position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -174,6 +191,9 @@ export default {
 
 .slide-panel--from-right .slide-panel__header {
   right: 0;
+  height: 40px;
+  position: relative;
+  top: 35px;
 }
 
 .slide-panel--is-visible .slide-panel__header {
