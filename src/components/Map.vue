@@ -253,6 +253,8 @@ export default {
               return record
           }
         })[0]
+
+        eventBus.$emit('showSidePanel', data)
       })
     },
     clearSourcesAndLayers() {

@@ -17,7 +17,6 @@
                           <span class="first-row-data" v-if="prettySqft">{{ prettySqft }} Sq Ft</span>
                         </div>
                         <div class="row">{{ builder }}</div>
-                        <div class="row"><button @click="clickHandler()" class="btn btn-default more-info">More Info</button></div>
                     </div>
                 </div>
             </div>
@@ -43,11 +42,6 @@ export default {
       prettyPrice: this.record.price
     }
   },
-  methods: {
-    clickHandler() {
-      eventBus.$emit('showSidePanel', this.record)
-    }
-  }
 }
 </script>
 
@@ -67,10 +61,5 @@ export default {
 .first-row-data {
   display: inline-block !important;
   font-size: 11px !important;
-}
-.more-info {
-  width: 100%;
-  padding-top: 12px;
-
 }
 </style>
