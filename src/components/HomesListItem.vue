@@ -34,7 +34,7 @@ export default {
   },
   methods: {
     clickHandler() {
-      this.$router.push('/' + this.record.id)
+      eventBus.$emit('showSidePanel', this.record)
     },
     mouseOverHandler() {
         eventBus.$emit('homeHovered', this.record)

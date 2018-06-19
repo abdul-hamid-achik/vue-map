@@ -83,11 +83,11 @@ export default {
         priceFilterCheck = true
 
         if (buildersFilters.length > 0) {
-          buildersFilterCheck = buildersFilters.filter(builder => record.builder).length > 0
+          buildersFilterCheck = buildersFilters.filter(builder => record.builder == builder).length > 0
         }
 
         if (stylesFilters.length > 0) {
-          stylesFilterCheck =  stylesFilters.filter(style => record.style).length > 0
+          stylesFilterCheck =  stylesFilters.filter(style => record.style == style).length > 0
         }
 
         if (bedsFilters.length > 0 && !(record.beds && record.beds in bedsFilters)) {
