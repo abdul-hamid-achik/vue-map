@@ -40,7 +40,9 @@ export default {
     })
 
     eventBus.$on("showSidePanel", data => {
-      let url = "http://localhost:8000/api/projects/1/marketing_site/lots/" + data.id
+      // let url = "http://localhost:8000/api/projects/1/marketing_site/lots/" + data.id
+
+      let url = "https://staging.rpgbuilders.com/api/projects/1/marketing_site/lots/" + data.id
       this.$http.get(url).then(response => {
         this.$modal.show(SidePanel, { 
           record: response.body.lot
