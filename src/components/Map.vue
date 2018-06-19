@@ -86,7 +86,7 @@ export default {
 
     })
     eventBus.$on("homeUnhovered", (data) => {
-        this.clearMapSelection()
+      this.clearMapSelection()
     })
     eventBus.$on('unselectedOption', function () {
       this.clearFilteredLotsFromMap()
@@ -235,7 +235,7 @@ export default {
         }, 500)
       })
 
-      this.map.on("mouseenter", "hover", (e) => {
+      this.map.on("mousemove", "hover", (e) => {
         this.map.getCanvas().style.cursor = "pointer"
 
       })
