@@ -234,7 +234,7 @@ export default {
   },
   methods: {    
     clickHandler(record) {
-      eventBus.$emit('showSidePanel', this.record)
+      eventBus.$emit('showSidePanel', record)
     },
     toggleClick (event) {
       switch (event.target.id) {

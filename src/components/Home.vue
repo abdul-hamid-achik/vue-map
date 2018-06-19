@@ -75,7 +75,9 @@ export default {
         }
       }).filter(item => item)
 
-      this.filteredRecords = this.records.filter(record => {
+      var unsoldRecords = this.records.slice(0).filter(record => !record.sale_id)
+      var notModelRecords = unsoldRecords.filter(record => !record.model)
+      this.filteredRecords = notModelRecords.filter(record => {
         var buildersFilterCheck, stylesFilterCheck, bedsFilterCheck, priceFilterCheck
         buildersFilterCheck = true
         stylesFilterCheck = true
