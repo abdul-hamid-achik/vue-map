@@ -27,6 +27,19 @@
         </div>
 
         <div class="slide-panel-inner">
+<!--           <div class="row">
+            <div class="col-md-6 padding-10">
+              <div>
+                Lot Size
+              </div>
+              <div> 
+                {{record.size}}
+              </div>
+              <div>
+                {{ record.width }} X {{ record.length }}
+              </div>
+            </div>
+          </div> -->
           <div id="property-details" class="row">
             <div class="col-md-6 col-xs-12">
               <div class="details">
@@ -52,8 +65,8 @@
                     <li v-if="record.style">
                       <span>{{ record.style.label }}</span> Architectural Style:
                     </li>
-                    <li v-if="record.sizes">
-                      <span>{{ record.sizes }}</span> Lot Size:
+                    <li v-if="record.size">
+                      <span>{{ record.size }}</span> Lot Size:
                     </li>
                     <li>
                       <button type="button" class="btn btn-primary btn-lg btn-block">Request More Info</button>
@@ -111,6 +124,7 @@ export default {
   name: 'SidePanel',
   props: ['record'],
   data () {
+    console.log(this.record)
     return {
 
     }
@@ -134,7 +148,7 @@ export default {
           new_schedule[day] = schedule[day]
         }
       })
-      
+
       return new_schedule
 
     },
@@ -463,7 +477,9 @@ export default {
   background-color: #181f35;
   border-color: #181f35;
 }
-
+.padding-10 {
+  padding: 10px !important;
+}
 @media only screen and (min-width: 768px) {
   .slide-panel__content p {
     font-size: 1.6rem;
