@@ -184,7 +184,6 @@ export default {
       this.clearSourcesAndLayers()
       this.addOtherSources()
       this.addOtherLayers()
-      
       this.map.addLayer({
         id: "sold",
         source: this.getAllSoldLots(params),
@@ -218,7 +217,8 @@ export default {
       this.map.on("mousemove", "shape", (e) => {
         var feature = e.features[0]
         var id = feature.properties.id
-        this.map.setFilter("hover", ["==", "id", id])
+        // this.map.setFilter("hover", ["==", "id", id])
+        this.map.getCanvas().style.cursor = "pointer"
         this.mapboxPopup
           .setLngLat(eval(feature.properties.xy))
           .setHTML('<div id="popup-content"></div>')
@@ -228,11 +228,10 @@ export default {
       })
 
       this.map.on("mouseleave", "shape", (e) => {
-        
-        setTimeout(_ => {
-          this.map.setFilter("hover", ["==", "id", ""])
-          this.mapboxPopup.remove()
-        }, 500)
+        // setTimeout(_ => {
+        //   // this.map.setFilter("hover", ["==", "id", ""])
+        //   this.mapboxPopup.remove()
+        // }, 500)
       })
 
       this.map.on("mousemove", "hover", (e) => {

@@ -27,19 +27,6 @@
         </div>
 
         <div class="slide-panel-inner">
-<!--           <div class="row">
-            <div class="col-md-6 padding-10">
-              <div>
-                Lot Size
-              </div>
-              <div> 
-                {{record.size}}
-              </div>
-              <div>
-                {{ record.width }} X {{ record.length }}
-              </div>
-            </div>
-          </div> -->
           <div id="property-details" class="row">
             <div class="col-md-6 col-xs-12">
               <div class="details">
