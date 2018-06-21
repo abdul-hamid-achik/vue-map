@@ -53,7 +53,7 @@ export default {
   // Status Configs
   status_available: {
     fill_color: "white",
-    fill_opacity: 0.9,
+    fill_opacity: 1.0,
     outline_color: "#999999"
   },
   // ARC same as Available
