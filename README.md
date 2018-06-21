@@ -34,3 +34,15 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 | id     | null  | Description of data and object |
 | baths  | null  | Description of data and object |
 | beds   | null  | Description of data and object |
+
+## Map Status Explanation
+
+There are 6 status types for a lot. Available, ARC, Closed, Sold, Spec, Reserved.
+
+Color settings on the Frontend.
+
+Available, ARC and Spec All have the same color settings.
+
+Sold and Closed should all have the same color settings.
+
+Reserved = Model Homes
