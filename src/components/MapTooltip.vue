@@ -17,6 +17,7 @@
                           <span class="first-row-data" v-if="prettySqft">{{ prettySqft }} Sq Ft</span>
                         </div>
                         <div class="row">{{ builder }}</div>
+                        <div class="row">{{ status }}</div>
                     </div>
                 </div>
             </div>
@@ -25,11 +26,11 @@
 </template>
 
 <script>
-import {eventBus} from '../main'
+import { eventBus } from "../main";
 export default {
-  props: ['record'],
-  name: 'MapTooltip',
-  data () {
+  props: ["record"],
+  name: "MapTooltip",
+  data() {
     return {
       photo: this.record.photo,
       label: this.record.label,
@@ -39,10 +40,11 @@ export default {
       baths: this.record.baths,
       prettySqft: this.record.sqft.toLocaleString(),
       builder: this.record.builder,
-      prettyPrice: this.record.price
-    }
-  },
-}
+      prettyPrice: this.record.price,
+      status: this.record.status
+    };
+  }
+};
 </script>
 
 <style lang="css" scoped>
