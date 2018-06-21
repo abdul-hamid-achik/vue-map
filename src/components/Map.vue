@@ -198,6 +198,26 @@ export default {
           "fill-outline-color": config.status_available.outline_color
         }
       });
+      this.map.addLayer({
+        id: "arc",
+        source: this.getAllArcLots(params),
+        type: "fill",
+        paint: {
+          "fill-color": config.status_arc.fill_color,
+          "fill-opacity": config.status_arc.fill_opacity,
+          "fill-outline-color": config.status_arc.outline_color
+        }
+      });
+      this.map.addLayer({
+        id: "closed",
+        source: this.getAllClosedLots(params),
+        type: "fill",
+        paint: {
+          "fill-color": config.status_closed.fill_color,
+          "fill-opacity": config.status_closed.fill_opacity,
+          "fill-outline-color": config.status_closed.outline_color
+        }
+      });
 
       this.map.addLayer({
         id: "sold",
@@ -393,6 +413,18 @@ export default {
       };
       return result;
     },
+    getAllArcLots(params) {
+      var result = {
+        type: "geojson",
+        data: {
+          type: "FeatureCollection",
+          features: params.data.features
+            .filter(record => record.properties.status == "ARC")
+            .filter(record => record)
+        }
+      };
+      return result;
+    },
     getAllSoldLots(params) {
       var result = {
         type: "geojson",
@@ -400,6 +432,18 @@ export default {
           type: "FeatureCollection",
           features: params.data.features
             .filter(record => record.properties.status == "Sold")
+            .filter(record => record)
+        }
+      };
+      return result;
+    },
+    getAllClosedLots(params) {
+      var result = {
+        type: "geojson",
+        data: {
+          type: "FeatureCollection",
+          features: params.data.features
+            .filter(record => record.properties.status == "Closed")
             .filter(record => record)
         }
       };
