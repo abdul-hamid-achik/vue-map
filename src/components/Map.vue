@@ -333,24 +333,13 @@ export default {
       var data = [];
       for (var i = 0; i < records.length; i++) {
         var record = records[i];
-        var label = record.label;
-        label = label + " Aledo TX";
-        var parts = label.split(" ");
-
-        var queryString = parts.join("+");
-        record.directions = "https://www.google.com/maps/dir/" + queryString;
 
         if (record.sqft) {
           record.prettySqft = record.sqft.toLocaleString();
         }
 
-        if (!record.price || record.price === 1 || record.price === 250000) {
-          record.price = 250000;
-        }
-
         record.prettyPrice = this.prettyPrice(record.price);
         record.model = record.status == "Reserved" ? true : false;
-        record.address = record.label;
 
         data.push(record);
       }
