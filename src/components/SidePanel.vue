@@ -14,10 +14,16 @@
               <h4 class="address">
                 {{ record.label }}
               </h4>
-              <p>{{record.max_beds }} Bed | {{ record.max_baths }} Bath | {{ record.max_garage }} Garage | {{ record.stories }} Stories</p>
+              <p v-if="isHomeSite">
+                {{record.max_beds }} Bed | {{ record.max_baths }} Bath | {{ record.max_garage }} Garage | {{ record.stories }} Stories
+              </p>
             </div>
             <div class="col-md-3">
-              <h4 class="price">${{ record.min_price }}
+              <h4 class="price" v-if="isHomeSite">
+                ${{ record.min_price }}
+              </h4>
+              <h4 class="price" v-else>
+                ${{ record.price }}
               </h4>
               <p>
                 <em>Starting From</em>
@@ -43,19 +49,22 @@
                 <span class="label-small">Additional Details</span>
                 <div class="data-text">
                   <ul>
-                    <li v-if="record.plan">
+                    <li v-if="!isHomeSite && record.plan">
                       <span>{{ record.plan.label }}</span> Plan:
                     </li>
-                    <li v-if="record.elevation">
+                    <li v-if="!isHomeSite && record.elevation">
                       <span>{{ record.elevation.label }}</span> Elevation:
                     </li>
-                    <li v-if="record.style">
+                    <li v-if="!isHomeSite && record.style">
                       <span>{{ record.style.label }}</span> Architectural Style:
                     </li>
-                    <li v-if="record.size">
+                    <li v-if="!isHomeSite && record.size">
                       <span>{{ record.size }}</span> Lot Size:
                     </li>
-                    <li>
+                    <li v-if="!isHomeSite && record.spec">
+                      <span>{{ record.spec.date_available }}</span> Available:
+                    </li>
+                    <li v-if="isHomeSite && record.min_sqft && record.max_sqft">
                       <span>{{ record.min_sqft }} - {{ record.max_sqft }}</span> Home Size Sqft: 
                     </li>
                   </ul>
@@ -78,7 +87,7 @@
                   <span class="label-smaller label-zipcode">{{ record.builder.model_home.zipcode }}</span>
               </div>
             </div>
-            <div class="col-md-6 col-xs-12">
+            <div class="col-md-6 col-xs-12" v-if="isHomeSite">
               <button type="button" class="btn btn-primary btn-lg btn-block btn-more-info">Request More Info</button>
             </div>
           </div>
@@ -87,10 +96,10 @@
               <div class="action-buttons">
                 <div class="data-text">
                   <p>
-                    <a :href="'https://www.google.com/maps?saddr=My+Location&daddr=' + record.builder.model_home.directions" class="btn btn-primary btn-lg btn-block" target="_blank">Driving directions to model</a>
+                    <a :href="'https://www.google.com/maps?saddr=My+Location&daddr=' + record.builder.model_home.centerpoint.join(',')" class="btn btn-primary btn-lg btn-block" target="_blank">Driving directions to model</a>
                   </p>
                   <p>
-                    <a :href="'https://www.google.com/maps?saddr=My+Location&daddr=' + getDirections(record)" class="btn btn-primary btn-lg btn-block" target="_blank">Driving directions to Home</a>
+                    <a :href="'https://www.google.com/maps?saddr=My+Location&daddr=' + record.centerpoint.join(',')" class="btn btn-primary btn-lg btn-block" target="_blank">Driving directions to Home</a>
                   </p>
                   <p>
                     <a :href="record.builder.website" class="btn btn-primary btn-lg btn-block" target="_blank">Visit Website</a>
@@ -119,13 +128,12 @@
 
 <script>
 export default {
-
   name: 'SidePanel',
   props: ['record'],
   data () {
     console.log(this.record)
     return {
-
+      isHomeSite: !this.record.spec || !this.record.arc
     }
   },
   methods: {
