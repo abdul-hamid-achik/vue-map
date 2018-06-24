@@ -218,6 +218,7 @@ export default {
         var feature = e.features[0]
         var id = feature.properties.id
         // this.map.setFilter("hover", ["==", "id", id])
+        eventBus.$emit("scrollTo", id)
         this.map.getCanvas().style.cursor = "pointer"
         this.mapboxPopup
           .setLngLat(eval(feature.properties.xy))

@@ -18,7 +18,7 @@
                       <div v-if="isHomeSitesTabActive" :class="{'grid-column-config': viewType == 'gridViewActive'}">
                         <div v-if="available.length > 0">
                           <div v-for="record in available" :key="record.id">
-                            <HomeSitesListItem :record="record"></HomeSitesListItem>
+                            <HomeSitesListItem :ref="record.id + '_list_item'" :record="record"></HomeSitesListItem>
                           </div>
                         </div>
                         <div v-else>
@@ -45,7 +45,7 @@
                       <div v-else :class="{'grid-column-config': viewType == 'gridViewActive'}">
                         <div v-if="spec.length > 0">
                           <div v-for="record in spec" :key="record.id">
-                            <HomesListItem :record="record"></HomesListItem>
+                            <HomesListItem :ref="record.id + '_list_item'" :record="record"></HomesListItem>
                           </div>
                         </div>
                         <div v-else>
@@ -220,7 +220,25 @@ export default {
       selectedDataSource: []
     }
     return data
-  },  
+  }, 
+  mounted() {
+    eventBus.$on('scrollTo', (data) => {
+      var record = this.records.filter(record => record.id == data)[0]
+      if (record.arc_id || record.spec_id) {
+        this.toggleClick(null, 'homes-button')
+      } else {
+
+        this.toggleClick(null, 'home-sites-button')
+      }
+      if (this.$refs[data + '_list_item']) {
+        setTimeout(_ => {
+          if (this.$refs[data + '_list_item'][0]) {
+            this.$refs[data + '_list_item'][0].$el.scrollIntoView(true)
+          }
+        }, 0)
+      }
+    })
+  },
   watch: {
     records: function (newData, oldData) {
       var records = [].concat(newData)
@@ -236,8 +254,8 @@ export default {
     clickHandler(record) {
       eventBus.$emit('showSidePanel', record)
     },
-    toggleClick (event) {
-      switch (event.target.id) {
+    toggleClick (event, id) {
+      switch ((event && event.target.id) || id) {
         case 'home-sites-button':
           this.isHomeSitesTabActive = true
           this.isHomesTabActive = false
