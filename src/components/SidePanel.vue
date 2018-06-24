@@ -56,7 +56,7 @@
                       <span>{{ record.size }}</span> Lot Size:
                     </li>
                     <li>
-                      <button type="button" class="btn btn-primary btn-lg btn-block">Request More Info</button>
+                      <span>{{ record.min_sqft }} - {{ record.max_sqft }}</span> Home Size Sqft: 
                     </li>
                   </ul>
 
@@ -64,35 +64,47 @@
               </div>
             </div>
           </div>
-          <div id="build-info" class="row" v-if="record.builder">
-            <div class="col-md-4 col-xs-12">
-              <div class="builder">
+          <div class="row">
+            <div class="builder-model-home-info col-md-6 col-xs-12">
+              <div class="builder col-md-6 col-xs-12">
                 <div class="data-logo">
                   <img id="builder-logo" alt="builder-logo" :src="record.builder.logo">
                 </div>
               </div>
+              <div class="model-address col-md-6 col-xs-12">
+                  <span class="label-small">Model Address</span>
+                  <span class="label-smaller label-address">{{ record.builder.model_home.street_address }}</span>
+                  <span class="label-smaller label-city-state">{{ record.builder.model_home.city }}, {{ record.builder.model_home.state }}</span>
+                  <span class="label-smaller label-zipcode">{{ record.builder.model_home.zipcode }}</span>
+              </div>
             </div>
-            <div class="col-md-4 col-xs-12" v-if="record.builder && record.builder.model_home">
-              <div class="model-address">
-                <span class="label-small">Model Address</span>
+            <div class="col-md-6 col-xs-12">
+              <button type="button" class="btn btn-primary btn-lg btn-block btn-more-info">Request More Info</button>
+            </div>
+          </div>
+          <div id="build-info" class="row" v-if="record.builder">
+            <div class="col-md-6 col-xs-12" v-if="record.builder && record.builder.model_home">
+              <div class="action-buttons">
                 <div class="data-text">
-                  <p>{{ record.builder.model_home.street_address }}<br></span>{{ record.builder.model_home.city }}, {{ record.builder.model_home.state }}<span>{{ record.builder.model_home.zipcode }}</span></p>
                   <p>
-                    <a :href="'https://www.google.com/maps/dir/' + record.builder.model_home.directions" class="" target="_blank">Get Driving Directions</a>
+                    <a :href="'https://www.google.com/maps?saddr=My+Location&daddr=' + record.builder.model_home.directions" class="btn btn-primary btn-lg btn-block" target="_blank">Driving directions to model</a>
                   </p>
                   <p>
-                    <a :href="record.builder.website" class="" target="_blank">Visit Website</a>
+                    <a :href="'https://www.google.com/maps?saddr=My+Location&daddr=' + getDirections(record)" class="btn btn-primary btn-lg btn-block" target="_blank">Driving directions to Home</a>
+                  </p>
+                  <p>
+                    <a :href="record.builder.website" class="btn btn-primary btn-lg btn-block" target="_blank">Visit Website</a>
                   </p>
                 </div>
               </div>
             </div>
-            <div class="col-md-4 col-xs-12">
+            <div class="col-md-6 col-xs-12">
               <div class="model-hours">
                 <span class="label-small">Model Hours</span>
                 <div class="data-text">
                   <ul>
                     <li v-for="day, hours in this.fixDays(record.builder.schedule)">
-                      <span>{{hours}}</span> {{day}} 
+                      <span>{{ day }}</span> {{ hours }}
                     </li>
                   </ul>
                 </div>
@@ -127,18 +139,21 @@ export default {
       let new_schedule = {}
 
       new_schedule[
-        equal_week_days[0].substring(0, 3) + " - " + equal_week_days[equal_week_days.length - 1].substring(0, 3)
+        equal_week_days[0].substring(0, 3).toUpperCase() + " - " + equal_week_days[equal_week_days.length - 1].substring(0, 3).toUpperCase()
       ] = schedule[equal_week_days[0]]
 
       Object.keys(schedule).forEach((day) => {
         if (equal_week_days.indexOf(day) == -1 && day != "id") {
-          new_schedule[day] = schedule[day]
+          new_schedule[day.toUpperCase()] = schedule[day]
         }
       })
 
       return new_schedule
 
     },
+    getDirections(record) {
+      return record.label.split(' ').join('+')
+    }
   }
 }
 </script>
@@ -474,4 +489,24 @@ export default {
   }
 }
 
+.btn-more-info {
+  padding-top: 15px;
+}
+.label-small, .label-smaller {
+  font-size: 12px;
+  display: block;
+}
+
+.builder.col-md-6, .model-address.col-md-6, .builder-model-home-info {
+  padding: 0px !important;
+}
+
+.model-address.col-md-6.col-xs-12 {
+  padding-top: 28px !important;
+}
+.btn.btn-primary {
+  background: #beb19f;
+  padding-top: 15px;
+  font-size: 12px;
+}
 </style>

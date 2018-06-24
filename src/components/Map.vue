@@ -295,8 +295,14 @@ export default {
         if (record.sqft) {
             record.prettySqft = record.sqft.toLocaleString()
         }
+
+        if (!record.price || record.price === 1 || record.price === 250000) {
+            record.price = 250000
+        }
+        
         record.prettyPrice = this.prettyPrice(record.price)
         record.model = (record.status == "Reserved") ? true : false
+
         data.push(record)
       }
 
@@ -335,7 +341,7 @@ export default {
     },
     cleanupCoordinates (polygon) {
       var coordinates = []
-      let coordinatesList = polygon[0]
+      var coordinatesList = polygon[0]
       for (var j = 0; j < coordinatesList.length; j++) {
           coordinates.push(coordinatesList[j].map(item => String(item)).reverse())
       }
