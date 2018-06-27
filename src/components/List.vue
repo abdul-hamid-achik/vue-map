@@ -103,7 +103,7 @@
                       {{ row.label }}
                     </div>
                     <div class="builder">
-                      {{ row.builder ? row.builder.label : '' }}
+                      {{ row.builder  }}
                     </div>
                   </div>
                 </div>
@@ -111,7 +111,7 @@
             </table-column>
             <table-column show="style" label="Arch. Style">
               <template slot-scope="row">
-                <span class="style">{{ row.style ? row.style.label : '' }}</span>
+                <span class="style">{{ row.style }}</span>
               </template>
             </table-column>
             <table-column show="beds" label="Bed">
@@ -207,7 +207,7 @@ import HomesListItem from '@/components/HomesListItem'
 import { TableComponent, TableColumn } from 'vue-table-component'
 import {eventBus} from '../main'
 export default {
-  props: ['records', 'viewType'],
+  props: ['records', 'viewType', 'allRecords'],
   name: 'List',
   components: {HomeSitesListItem, HomesListItem, TableComponent, TableColumn},
   data () {
@@ -223,7 +223,7 @@ export default {
   }, 
   mounted() {
     eventBus.$on('scrollTo', (data) => {
-      var record = this.records.filter(record => record.id == data)[0]
+      var record = this.allRecords.filter(record => record.id == data)[0]
       if (record.arc_id || record.spec_id) {
         this.toggleClick(null, 'homes-button')
       } else {

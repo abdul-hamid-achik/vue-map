@@ -12821,6 +12821,7 @@ button.close {
   cursor: pointer;
   -webkit-transform: translateY(-4px);
   transform: translateY(-4px);
+  -webkit-backface-visibility: hidden;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
   will-change: opacity;
   border: 1px solid #90a4ae;

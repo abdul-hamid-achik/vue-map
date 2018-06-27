@@ -251,6 +251,9 @@ export default {
           }
         })[0]
 
+        if (data.sale_id || data.status == 'Closed' || data.status == "Sold") {
+          return
+        }
         eventBus.$emit('showSidePanel', data)
       })
     },

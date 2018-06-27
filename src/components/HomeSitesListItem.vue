@@ -1,7 +1,7 @@
 <template>
     <div class="home-site-list-item" v-on:mouseover="mouseOverHandler" v-on:mouseleave="mouseLeaveHandler" @click="clickHandler()">
         <div class="home-site-list-container animation-scale-up">
-            <div class="record" lot="record.id">
+            <div class="record" lot="record.id" :ref="record.id">
                 <img v-bind:src="record.photo" alt="" >
                 <!-- Turn on to find the sold lots showing up -->
                 <!-- <div class="listing-status move-in">{status}</div> -->
@@ -39,15 +39,27 @@ export default {
     },
     mouseOverHandler() {
         eventBus.$emit('homeHovered', this.record)
+        this.$refs[this.record.id].classList.add('hover-record')
     },
     mouseLeaveHandler() {
         eventBus.$emit('homeUnhovered', this.record)  
+        this.$refs[this.record.id].classList.remove('hover-record')
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+    .hover-record {
+        cursor: pointer !important;
+        -webkit-transform: translateY(-4px) translate3d(0px, 0px, 0px) !important;
+        transform: translateY(-4px) translate3d(0px, 0px, 0px) !important;
+        -webkit-box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15) !important;
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15) !important;
+        will-change: opacity !important;
+        border: 1px solid #90a4ae !important;
+        background-blend-mode: multiply !important;
+    }
     .address {
         font-size: 13px !important;
         font-weight: bold !important;
@@ -68,6 +80,7 @@ export default {
     }
     .price-label {
         font-size: 11px !important;
+        padding-top: 2px;
         font-family: din-2014;
     }
 </style>

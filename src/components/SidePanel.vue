@@ -14,7 +14,7 @@
               <h4 class="address">
                 {{ record.label }}
               </h4>
-              <p v-if="isHomeSite">
+              <p>
                 {{record.max_beds }} Bed | {{ record.max_baths }} Bath | {{ record.max_garage }} Garage | {{ record.stories }} Stories
               </p>
             </div>

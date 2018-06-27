@@ -2,7 +2,7 @@
     <div class="content">
         <FilterNavbar :records="records" :filteredRecords="filteredRecords" :totalLength="records.length"></FilterNavbar>
         <Map :viewType="viewType" :records="records" :filteredRecords="filteredRecords"></Map>
-        <List :viewType="viewType" :records="filteredRecords"></List>
+        <List :viewType="viewType" :allRecords="records" :records="filteredRecords"></List>
         <modals-container/>
     </div>
 </template>
@@ -82,7 +82,7 @@ export default {
         buildersFilterCheck = true
         stylesFilterCheck = true
         bedsFilterCheck = true
-        priceFilterCheck = true
+        priceFilterCheck = false
 
         if (buildersFilters.length > 0) {
           buildersFilterCheck = buildersFilters.filter(builder => record.builder == builder).length > 0
@@ -95,7 +95,6 @@ export default {
         if (bedsFilters.length > 0 && !(record.beds && record.beds in bedsFilters)) {
           bedsFilterCheck = bedsFilters.filter(beds => {
             var numberOfBeds
-            // need to cleanup
             if (beds.indexOf("1") != -1) {
               numberOfBeds = beds.split('bed')[0].trim() + "-10"
             } else {
@@ -105,19 +104,33 @@ export default {
           }).length > 0
         }
 
-        if (priceFilter.length == 1) {
-          priceFilter.map(priceRange => {
-            var min = priceRange[0], max = priceRange[1]
-            if (!(min < record.price && max > record.price)) {
-              priceFilterCheck = false
+        if (priceFilter.length > 0) {
+          // priceFilter.map(priceRange => {
+          //   var min = priceRange[0], max = priceRange[1]
+          //   if (!(min < record.price && max > record.price)) {
+          //     priceFilterCheck = false
+          //   }
+          // })
+          for (var i = 0; i < priceFilter.length; i++) {
+            var priceRange = priceFilter[i], min = priceRange[0], max = priceRange[1]
+            if (min < record.price && max > record.price) {
+              priceFilterCheck = true
+              break
             }
-          })
-        } else if (priceFilter.length > 0) {
-          var min = priceFilter[0][0], max = priceFilter[priceFilter.length - 1][1]
-          if (!(min < record.price && max > record.price)) {
-            priceFilterCheck = false
           }
+          // priceFilter.map(priceRange => {
+          //   var min = priceRange[0], max = priceRange[1]
+          //   if (min < record.price && max > record.price) {
+          //     priceFilterCheck = true
+          //   }
+          // })
         }
+        // } else if (priceFilter.length > 0) {
+        //   var min = priceFilter[0][0], max = priceFilter[priceFilter.length - 1][1]
+        //   if (!(min < record.price && max > record.price)) {
+        //     priceFilterCheck = false
+        //   }
+        // }
 
         return buildersFilterCheck && stylesFilterCheck && bedsFilterCheck && priceFilterCheck
       })
