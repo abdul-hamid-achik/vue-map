@@ -76,11 +76,11 @@
           <div class="row">
             <div class="builder-model-home-info col-md-6 col-xs-12">
               <div class="builder col-md-6 col-xs-12">
-                <div class="data-logo">
+                <div class="data-logo" v-if="record.builder && record.builder.logo">
                   <img id="builder-logo" alt="builder-logo" :src="record.builder.logo">
                 </div>
               </div>
-              <div class="model-address col-md-6 col-xs-12">
+              <div class="model-address col-md-6 col-xs-12" v-if="record.builder && record.builder.model_home">
                   <span class="label-small">Model Address</span>
                   <span class="label-smaller label-address">{{ record.builder.model_home.street_address }}</span>
                   <span class="label-smaller label-city-state">{{ record.builder.model_home.city }}, {{ record.builder.model_home.state }}</span>
@@ -92,23 +92,23 @@
             </div>
           </div>
           <div id="build-info" class="row" v-if="record.builder">
-            <div class="col-md-6 col-xs-12" v-if="record.builder && record.builder.model_home">
+            <div class="col-md-6 col-xs-12">
               <div class="action-buttons">
                 <div class="data-text">
-                  <p>
+                  <p v-if="record.builder && record.builder.model_home">
                     <a :href="'https://www.google.com/maps?saddr=My+Location&daddr=' + record.builder.model_home.centerpoint.join(',')" class="btn btn-primary btn-lg btn-block" target="_blank">Driving directions to model</a>
                   </p>
                   <p>
                     <a :href="'https://www.google.com/maps?saddr=My+Location&daddr=' + record.centerpoint.join(',')" class="btn btn-primary btn-lg btn-block" target="_blank">Driving directions to Home</a>
                   </p>
-                  <p>
+                  <p v-if="record.builder && record.builder.website>
                     <a :href="record.builder.website" class="btn btn-primary btn-lg btn-block" target="_blank">Visit Website</a>
                   </p>
                 </div>
               </div>
             </div>
             <div class="col-md-6 col-xs-12">
-              <div class="model-hours">
+              <div class="model-hours" v-if="record.builder && record.builder.schedule.monday">
                 <span class="label-small">Model Hours</span>
                 <div class="data-text">
                   <ul>

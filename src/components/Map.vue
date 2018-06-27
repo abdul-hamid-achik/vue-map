@@ -35,7 +35,7 @@ export default {
       mapboxPopup: new mapboxgl.Popup({
         closeButton: false,
         closeOnClick: false,
-        offset: (0, 10),
+        offset: (0, 5),
       }),
       filterTimeout: null
     }
@@ -274,7 +274,7 @@ export default {
           }
         })[0]
 
-        if (data.sale_id || data.status == 'Closed' || data.status == "Sold") {
+        if (data.status == 'Closed' || data.status == "Sold") {
           return
         }
         eventBus.$emit('showSidePanel', data)
