@@ -26,17 +26,24 @@ export default {
         center: config.center,
         zoom: config.zoom
       },
+      lot: null,
+      lot_id: null,
       currentlySelectedLayer: null,
       layersHistory: {},
       map: null,
       popup: Vue.extend(MapTooltip),
-      mapboxPopup: new mapboxgl.Popup(),
+      mapboxPopup: new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: false,
+        offset: (0, 10),
+      }),
       filterTimeout: null
     }
   },
 
 
   created() {
+    this.mapboxPopup.setHTML('<div id="popup-content"></div>')
     eventBus.$on("requestFullscreen", _ => {
       this.map.getCanvas().webkitRequestFullScreen()
       this.map.resize()
@@ -213,22 +220,38 @@ export default {
       })
       this.bindEvents()
     },
+
+ 
+
     bindEvents() {
-      this.map.on("mousemove", "shape", (e) => {
-        var feature = e.features[0]
-        var id = feature.properties.id
-        // this.map.setFilter("hover", ["==", "id", id])
-        eventBus.$emit("scrollTo", id)
-        this.map.getCanvas().style.cursor = "pointer"
-        this.mapboxPopup
-          .setLngLat(eval(feature.properties.xy))
-          .setHTML('<div id="popup-content"></div>')
-          .addTo(this.map)
-        var record = this.modifiedRecords.filter(record => record.id == id)[0]
-        new this.popup({ propsData: { record: record }}).$mount('#popup-content')
+      this.map.on("mousemove", "shape", (event) => {
+        this.mapboxPopup.setLngLat(event.lngLat)
+        if (this.lot_id != event.features[0].properties.id) {
+          this.lot_id  = event.features[0].properties.id
+          this.lot = this.records.find(item => item.id === this.lot_id)
+          this.mapboxPopup
+            .setHTML('<div id="popup-content"></div>').addTo(this.map)
+          new this.popup({ propsData: { record: this.lot }}).$mount('#popup-content')
+        }
+
+        this.map.getCanvas().style.cursor = 'pointer'
+        // var feature = e.features[0]
+        // var id = feature.properties.id
+        // // this.map.setFilter("hover", ["==", "id", id])
+        // eventBus.$emit("scrollTo", id)
+        // this.map.getCanvas().style.cursor = "pointer"
+        // this.mapboxPopup
+        //   .setLngLat(eval(feature.properties.xy))
+        //   .setHTML('<div id="popup-content"></div>')
+        //   .addTo(this.map)
+        // var record = this.modifiedRecords.filter(record => record.id == id)[0]
+        // new this.popup({ propsData: { record: record }}).$mount('#popup-content')
       })
 
       this.map.on("mouseleave", "shape", (e) => {
+        this.map.getCanvas().style.cursor = ''
+        this.lot_id = null,
+        this.lot = {}
         this.mapboxPopup.remove()
       })
 
@@ -237,9 +260,9 @@ export default {
 
       })
 
-      this.map.on("mouseleave", "hover", (e) => {
-        this.map.getCanvas().style.cursor = ""
-      })
+      // this.map.on("mouseleave", "hover", (e) => {
+      //   this.map.getCanvas().style.cursor = ""
+      // })
 
       this.map.on("click", "shape", (e) => {
         var properties = e.features[0].properties
