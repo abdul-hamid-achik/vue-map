@@ -517,4 +517,7 @@ export default {
   padding-top: 15px;
   font-size: 12px;
 }
+#photograph {
+  width: 100px;
+}
 </style>
