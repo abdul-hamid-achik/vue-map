@@ -8,7 +8,6 @@
 export default {
   name: 'App',
   created () {
-    // let url = 'http://localhost:8000/api/projects/1/marketing_site/lots'
     let url = 'https://staging.rpgbuilders.com/api/projects/1/marketing_site/lots'
     this.$http.get(url).then(response => {
       this.records = response.body.records

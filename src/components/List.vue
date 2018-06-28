@@ -335,10 +335,6 @@ export default {
             }
 
             if (record.spec_id || record.arc_id) {
-                // if (record.model || record.spec) {
-                //     delete record.status
-                // }
-
                 specs.push(record)
             }
         }

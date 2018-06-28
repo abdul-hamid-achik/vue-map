@@ -40,8 +40,6 @@ export default {
     })
 
     eventBus.$on("showSidePanel", data => {
-      // let url = "http://localhost:8000/api/projects/1/marketing_site/lots/" + data.id
-
       let url = "https://staging.rpgbuilders.com/api/projects/1/marketing_site/lots/" + data.id
       this.$http.get(url).then(response => {
         this.$modal.show(SidePanel, { 
@@ -74,66 +72,52 @@ export default {
           return priceRanges.map(item => parseInt(item.trim().replace(/,/g, "")))
         }
       }).filter(item => item)
+      if (newValue.length > 0) {
+        var unsoldRecords = this.records.slice(0).filter(record => !record.sale_id)
+        var notModelRecords = unsoldRecords.filter(record => !record.model)
+        this.filteredRecords = notModelRecords.filter(record => {
+          var buildersFilterCheck, stylesFilterCheck, bedsFilterCheck, priceFilterCheck
+          buildersFilterCheck = true
+          stylesFilterCheck = true
+          bedsFilterCheck = true
+          priceFilterCheck = true
 
-      var unsoldRecords = this.records.slice(0).filter(record => !record.sale_id)
-      var notModelRecords = unsoldRecords.filter(record => !record.model)
-      this.filteredRecords = notModelRecords.filter(record => {
-        var buildersFilterCheck, stylesFilterCheck, bedsFilterCheck, priceFilterCheck
-        buildersFilterCheck = true
-        stylesFilterCheck = true
-        bedsFilterCheck = true
-        priceFilterCheck = false
+          if (buildersFilters.length > 0) {
+            buildersFilterCheck = buildersFilters.filter(builder => record.builder == builder).length > 0
+          }
 
-        if (buildersFilters.length > 0) {
-          buildersFilterCheck = buildersFilters.filter(builder => record.builder == builder).length > 0
-        }
+          if (stylesFilters.length > 0) {
+            stylesFilterCheck =  stylesFilters.filter(style => record.style == style).length > 0
+          }
 
-        if (stylesFilters.length > 0) {
-          stylesFilterCheck =  stylesFilters.filter(style => record.style == style).length > 0
-        }
+          if (bedsFilters.length > 0 && !(record.beds && record.beds in bedsFilters)) {
+            bedsFilterCheck = bedsFilters.filter(beds => {
+              var numberOfBeds
+              if (beds.indexOf("1") != -1) {
+                numberOfBeds = beds.split('bed')[0].trim() + "-10"
+              } else {
+                numberOfBeds = parseInt(beds.split('beds')[0].trim())
+              }
+              return numberOfBeds == record.beds
+            }).length > 0
+          }
 
-        if (bedsFilters.length > 0 && !(record.beds && record.beds in bedsFilters)) {
-          bedsFilterCheck = bedsFilters.filter(beds => {
-            var numberOfBeds
-            if (beds.indexOf("1") != -1) {
-              numberOfBeds = beds.split('bed')[0].trim() + "-10"
-            } else {
-              numberOfBeds = parseInt(beds.split('beds')[0].trim())
-            }
-            return numberOfBeds == record.beds
-          }).length > 0
-        }
-
-        if (priceFilter.length > 0) {
-          // priceFilter.map(priceRange => {
-          //   var min = priceRange[0], max = priceRange[1]
-          //   if (!(min < record.price && max > record.price)) {
-          //     priceFilterCheck = false
-          //   }
-          // })
-          for (var i = 0; i < priceFilter.length; i++) {
-            var priceRange = priceFilter[i], min = priceRange[0], max = priceRange[1]
-            if (min < record.price && max > record.price) {
-              priceFilterCheck = true
-              break
+          if (priceFilter.length > 0) {
+            for (var i = 0; i < priceFilter.length; i++) {
+              priceFilterCheck = false
+              var priceRange = priceFilter[i], min = priceRange[0], max = priceRange[1]
+              if (min < record.price && max > record.price) {
+                priceFilterCheck = true
+                break
+              }
             }
           }
-          // priceFilter.map(priceRange => {
-          //   var min = priceRange[0], max = priceRange[1]
-          //   if (min < record.price && max > record.price) {
-          //     priceFilterCheck = true
-          //   }
-          // })
-        }
-        // } else if (priceFilter.length > 0) {
-        //   var min = priceFilter[0][0], max = priceFilter[priceFilter.length - 1][1]
-        //   if (!(min < record.price && max > record.price)) {
-        //     priceFilterCheck = false
-        //   }
-        // }
 
-        return buildersFilterCheck && stylesFilterCheck && bedsFilterCheck && priceFilterCheck
-      })
+          return buildersFilterCheck && stylesFilterCheck && bedsFilterCheck && priceFilterCheck
+        })
+      } else {
+        this.filteredRecords = this.records.slice(0);
+      }
     }
   }
 }

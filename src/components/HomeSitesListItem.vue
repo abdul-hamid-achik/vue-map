@@ -3,8 +3,6 @@
         <div class="home-site-list-container animation-scale-up">
             <div class="record" lot="record.id" :ref="record.id">
                 <img v-bind:src="record.photo" alt="" >
-                <!-- Turn on to find the sold lots showing up -->
-                <!-- <div class="listing-status move-in">{status}</div> -->
                 <hr class="divider">
                 <div class="record-info">
                     <div class="col-xs-8 text-left">

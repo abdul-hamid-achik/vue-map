@@ -39,7 +39,7 @@
                 <span class="label-small">Overview</span>
                 <div class="data-text">
                   <p class="description">
-                    {{ record.description }}
+                    {{ record.builder.description }}
                   </p>
                 </div>
               </div>
@@ -101,7 +101,7 @@
                   <p>
                     <a :href="'https://www.google.com/maps?saddr=My+Location&daddr=' + record.centerpoint.join(',')" class="btn btn-primary btn-lg btn-block" target="_blank">Driving directions to Home</a>
                   </p>
-                  <p v-if="record.builder && record.builder.website>
+                  <p v-if="record.builder && record.builder.website">
                     <a :href="record.builder.website" class="btn btn-primary btn-lg btn-block" target="_blank">Visit Website</a>
                   </p>
                 </div>
@@ -131,7 +131,6 @@ export default {
   name: 'SidePanel',
   props: ['record'],
   data () {
-    console.log(this.record)
     return {
       isHomeSite: !this.record.spec || !this.record.arc
     }
@@ -518,6 +517,6 @@ export default {
   font-size: 12px;
 }
 #photograph {
-  width: 100px;
+  width: 100%;
 }
 </style>

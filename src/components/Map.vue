@@ -235,17 +235,6 @@ export default {
         }
 
         this.map.getCanvas().style.cursor = 'pointer'
-        // var feature = e.features[0]
-        // var id = feature.properties.id
-        // // this.map.setFilter("hover", ["==", "id", id])
-        // eventBus.$emit("scrollTo", id)
-        // this.map.getCanvas().style.cursor = "pointer"
-        // this.mapboxPopup
-        //   .setLngLat(eval(feature.properties.xy))
-        //   .setHTML('<div id="popup-content"></div>')
-        //   .addTo(this.map)
-        // var record = this.modifiedRecords.filter(record => record.id == id)[0]
-        // new this.popup({ propsData: { record: record }}).$mount('#popup-content')
       })
 
       this.map.on("mouseleave", "shape", (e) => {
@@ -260,10 +249,6 @@ export default {
 
       })
 
-      // this.map.on("mouseleave", "hover", (e) => {
-      //   this.map.getCanvas().style.cursor = ""
-      // })
-
       this.map.on("click", "shape", (e) => {
         var properties = e.features[0].properties
         var id = properties.id
@@ -277,6 +262,7 @@ export default {
         if (data.status == 'Closed' || data.status == "Sold") {
           return
         }
+
         eventBus.$emit('showSidePanel', data)
       })
     },
