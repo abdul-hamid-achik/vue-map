@@ -57,22 +57,18 @@ export default {
 
       this.map.flyTo({
         center: center.reverse(),
-        zoom: 16.5
+        zoom: 15.5
       });
-      let border = config.css.border;
-      let shape = config.css.shape;
 
-      // No clue what this was for
       // let border = config.css.border;
       // let shape = config.css.shape;
-
-      // border["line-color"] = "red";
-      // border["line-width"] = 1;
-      // shape["fill-color"] = "red";
-      // shape["fill-opacity"] = 0.9;
+      //
+      // border["line-color"] = "#666666";
+      // border["line-width"] = 0.9;
+      // shape["fill-color"] = "#2C4E67";
+      // shape["fill-opacity"] = 0.5;
 
       this.currentlySelectedLayer = {
-        // Thumbnail Rollover Fill Color for map hover indication
         shape: {
           id:
             record.id + "_{timestamp}_shape".replace("{timestamp}", Date.now()),
@@ -86,7 +82,6 @@ export default {
             "fill-opacity": config.action_tmb_hover.fill_opacity
           }
         },
-        // Thumbnail Rollover Line Color for map hover indication
         border: {
           id:
             record.id +
@@ -136,30 +131,20 @@ export default {
           this.map.addControl(new mapboxgl.NavigationControl());
           this.map.doubleClickZoom.disable();
           this.map.scrollZoom.disable();
-          // Set Pitch and Animate On Load
-          setTimeout(_ => {
-            this.map.easeTo({
-              duration: 3200,
-          this.map.scrollZoom.disable();
           this.map.on("load", function() {
             var d = 3200,
               t = new Date().getTime();
             map.flyTo({
               center: [-97.56653308868408, 32.73660607970235],
               pitch: 45,
-              bearing: 1,
-              easing: function easing(t) {
-                return t * (2 - t);
-              }
+              bearing: 0.5,
               duration: d,
               zoom: 15.78
               // easing: function easing(t) {
               //   return t * (2 - t);
               // }
             });
-          }, 500);
           });
-
           this.map.on("load", this.mapLoad);
         });
       }
@@ -167,7 +152,6 @@ export default {
     records: function(newData, oldData) {
       this.modifiedRecords = this.modifyRecords(newData);
     },
-    // Filtered Records Border Color
     filteredRecords: function(newData, oldData) {
       if (newData.length == this.records.length) {
         return;
@@ -230,7 +214,6 @@ export default {
     },
     mapLoad(event) {
       var params = this.generateMapData(this.records);
-      // Map lighting - Move in to config later
       this.map.setLight({
         color: "#fff",
         intensity: 0.5,
@@ -240,8 +223,8 @@ export default {
       this.clearSourcesAndLayers();
       this.addOtherSources();
       this.addOtherLayers();
+      // Correct Sold or Closed Homes
       this.map.addLayer({
-        // Correct Sold or Closed Homes
         id: "sold",
         source: this.getAllSoldLots(params),
         type: "fill",
@@ -251,8 +234,8 @@ export default {
           "fill-outline-color": config.status_sold.outline_color
         }
       });
+      // Available Homes/Specs
       this.map.addLayer({
-        // Available Homes/Specs
         id: "spec",
         source: this.getAllSpecLots(params),
         type: "fill",
@@ -271,8 +254,6 @@ export default {
           "fill-color": config.status_reserved.fill_color,
           "fill-opacity": config.status_reserved.fill_opacity,
           "fill-outline-color": config.status_reserved.outline_color
-          "fill-color": config.colors.reserved,
-          "fill-opacity": 0.9
         }
       });
       this.bindEvents();
@@ -289,12 +270,6 @@ export default {
         if (this.lot_id != event.features[0].properties.id) {
           this.lot_id = event.features[0].properties.id;
           this.lot = this.records.find(item => item.id === this.lot_id);
-          if (
-            this.lot.status == "Sold" ||
-            this.lot.status == "Closed" ||
-            this.lot.status == "Reserved" ||
-            !this.lot.builder
-          ) {
 
           if (this.shouldShow(this.lot)) {
             this.mapboxPopup
@@ -312,19 +287,12 @@ export default {
       });
 
       this.map.on("mouseleave", "shape", e => {
-        this.map.setFilter("hover", ["==", "id", ""]);
-        this.map.getCanvas().style.cursor = "";
-
         (this.lot_id = null), (this.lot = {});
         this.mapboxPopup.remove();
         this.map.setFilter("hover", ["==", "id", ""]);
         this.map.getCanvas().style.cursor = "";
       });
 
-      this.map.on("mousemove", "hover", e => {
-        this.map.getCanvas().style.cursor = "pointer";
-      });
-      // Hover Indication Style assigned to "Shape in Config - Horrible name fix later"
       this.map.on("click", "shape", e => {
         var properties = e.features[0].properties;
         var id = properties.id;
@@ -335,18 +303,9 @@ export default {
           }
         })[0];
 
-        if (
-          data.status == "Sold" ||
-          data.status == "Closed" ||
-          data.status == "Reserved" ||
-          !data.builder
-        ) {
-          return;
         if (this.shouldShow(data)) {
           eventBus.$emit("showSidePanel", data);
         }
-
-        eventBus.$emit("showSidePanel", data);
       });
     },
     shouldShow(data) {
@@ -449,7 +408,6 @@ export default {
         properties: {
           id: record.id,
           sku: record.sku,
-          // color: record.color,
           color: record.color,
           xy: xy,
           status: record.status
@@ -476,8 +434,6 @@ export default {
         data: {
           type: "FeatureCollection",
           features: params.data.features
-            .filter(record => record.properties.status == "Sold")
-          .filter(record => record.properties.status == "Sold")
             .filter(
               record =>
                 record.properties.status == "Sold" ||

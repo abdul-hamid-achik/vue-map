@@ -77,6 +77,11 @@ export default {
     fill_opacity: 0.9,
     outline_color: "#999999"
   },
+  status_closed: {
+    fill_color: "#e9e9ed",
+    fill_opacity: 0.9,
+    outline_color: "#999999"
+  },
   // Spec = Available Home
   status_spec: {
     fill_color: "#e9e9ed",
