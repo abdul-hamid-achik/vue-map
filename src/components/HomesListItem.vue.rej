@@ -1,0 +1,131 @@
+diff a/src/components/HomesListItem.vue b/src/components/HomesListItem.vue	(rejected hunks)
+@@ -22,76 +22,79 @@
+ </template>
+ 
+ <script>
+-import {eventBus} from '../main'
++import { eventBus } from "../main";
+ export default {
+-  props: ['record'],
+-  name: 'HomesListItem',
++  props: ["record"],
++  name: "HomesListItem",
+ 
+-  data () {
+-    return {
+-
+-    }
++  data() {
++    return {};
+   },
+   methods: {
+     shouldShow(data) {
+       if (!data.builder) {
+-        return false
++        return false;
+       }
+ 
+-      switch(data.status) {
+-        case 'Sold':
+-          return false
+-        break;
++      switch (data.status) {
++        case "Sold":
++          return false;
++          break;
+ 
+-        case 'Reserverd':
+-          return false
+-        break;
++        case "Reserverd":
++          return false;
++          break;
+ 
+-        case 'Closed':
+-          return false
+-        break;
++        case "Closed":
++          return false;
++          break;
+       }
+-      return true
++      return true;
+     },
+     clickHandler() {
+-        if (this.shouldShow(this.record)) {
+-          eventBus.$emit('showSidePanel', this.record)
+-        }
++      if (this.shouldShow(this.record)) {
++        eventBus.$emit("showSidePanel", this.record);
++      }
+     },
+     mouseOverHandler() {
+-        eventBus.$emit('homeHovered', this.record)
++      eventBus.$emit("homeHovered", this.record);
+     },
+     mouseLeaveHandler() {
+-        eventBus.$emit('homeUnhovered', this.record)  
++      eventBus.$emit("homeUnhovered", this.record);
+     }
+   }
+-}
++};
+ </script>
+ 
+ <style lang="scss" scoped>
+-    .record {
+-        // width: 336px;
+-    }
+-    .address {
+-        font-size: 13px !important;
+-        font-weight: bold !important;
+-    }
+-    .lot-size, .builder, .address, .beds-bath {
+-        letter-spacing: initial !important;
+-        font-family: din-2014;
+-        display: block !important;
+-        font-style: initial !important;
+-    }
+-    .lot-size, .builder, .beds-bath {
+-        font-size: 11px !important;
+-    }
+-    .price {
+-        font-weight: bold !important;
+-        font-size: 13px !important;
+-        letter-spacing: initial !important;
+-    }
+-    .price-label {
+-        font-size: 11px !important;
+-        font-family: din-2014;
+-    }
++.record {
++  // width: 336px;
++}
++.address {
++  font-size: 13px !important;
++  font-weight: bold !important;
++}
++.lot-size,
++.builder,
++.address,
++.beds-bath {
++  letter-spacing: initial !important;
++  font-family: din-2014;
++  display: block !important;
++  font-style: initial !important;
++}
++.lot-size,
++.builder,
++.beds-bath {
++  font-size: 11px !important;
++}
++.price {
++  font-weight: bold !important;
++  font-size: 13px !important;
++  letter-spacing: initial !important;
++}
++.price-label {
++  font-size: 11px !important;
++  font-family: din-2014;
++}
+ </style>

@@ -1,0 +1,150 @@
+diff a/src/components/HomeSitesListItem.vue b/src/components/HomeSitesListItem.vue	(rejected hunks)
+@@ -21,87 +21,87 @@
+ </template>
+ 
+ <script>
+-import {eventBus} from '../main'
++import { eventBus } from "../main";
+ export default {
+-  props: ['record'],
+-  name: 'HomeSitesListItem',
++  props: ["record"],
++  name: "HomeSitesListItem",
+ 
+-  data () {
+-    return {
+-
+-    }
++  data() {
++    return {};
+   },
+   methods: {
+     shouldShow(data) {
+       if (!data.builder) {
+-        return false
++        return false;
+       }
+ 
+-      switch(data.status) {
+-        case 'Sold':
+-          return false
+-        break;
++      switch (data.status) {
++        case "Sold":
++          return false;
++          break;
+ 
+-        case 'Reserverd':
+-          return false
+-        break;
++        case "Reserverd":
++          return false;
++          break;
+ 
+-        case 'Closed':
+-          return false
+-        break;
++        case "Closed":
++          return false;
++          break;
+       }
+-      return true
++      return true;
+     },
+     clickHandler() {
+-        if (this.shouldShow(this.record)) {
+-          eventBus.$emit('showSidePanel', this.record)
+-        }
++      if (this.shouldShow(this.record)) {
++        eventBus.$emit("showSidePanel", this.record);
++      }
+     },
+     mouseOverHandler() {
+-        eventBus.$emit('homeHovered', this.record)
+-        this.$refs[this.record.id].classList.add('hover-record')
++      eventBus.$emit("homeHovered", this.record);
++      this.$refs[this.record.id].classList.add("hover-record");
+     },
+     mouseLeaveHandler() {
+-        eventBus.$emit('homeUnhovered', this.record)  
+-        this.$refs[this.record.id].classList.remove('hover-record')
++      eventBus.$emit("homeUnhovered", this.record);
++      this.$refs[this.record.id].classList.remove("hover-record");
+     }
+   }
+-}
++};
+ </script>
+ 
+ <style lang="scss" scoped>
+-    .hover-record {
+-        cursor: pointer !important;
+-        -webkit-transform: translateY(-4px) translate3d(0px, 0px, 0px) !important;
+-        transform: translateY(-4px) translate3d(0px, 0px, 0px) !important;
+-        -webkit-box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15) !important;
+-        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15) !important;
+-        will-change: opacity !important;
+-        border: 1px solid #90a4ae !important;
+-        background-blend-mode: multiply !important;
+-    }
+-    .address {
+-        font-size: 13px !important;
+-        font-weight: bold !important;
+-    }
+-    .lot-size, .builder, .address {
+-        letter-spacing: initial !important;
+-        font-family: din-2014;
+-        display: block !important;
+-        font-style: initial !important;
+-    }
+-    .lot-size, .builder {
+-        font-size: 11px !important;
+-    }
+-    .price {
+-        font-weight: bold !important;
+-        font-size: 13px !important;
+-        letter-spacing: initial !important;
+-    }
+-    .price-label {
+-        font-size: 11px !important;
+-        padding-top: 2px;
+-        font-family: din-2014;
+-    }
++.hover-record {
++  cursor: pointer !important;
++  -webkit-transform: translateY(-4px) translate3d(0px, 0px, 0px) !important;
++  transform: translateY(-4px) translate3d(0px, 0px, 0px) !important;
++  -webkit-box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15) !important;
++  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15) !important;
++  will-change: opacity !important;
++  border: 1px solid #90a4ae !important;
++  background-blend-mode: multiply !important;
++}
++.address {
++  font-size: 13px !important;
++  font-weight: bold !important;
++}
++.lot-size,
++.builder,
++.address {
++  letter-spacing: initial !important;
++  font-family: din-2014;
++  display: block !important;
++  font-style: initial !important;
++}
++.lot-size,
++.builder {
++  font-size: 11px !important;
++}
++.price {
++  font-weight: bold !important;
++  font-size: 13px !important;
++  letter-spacing: initial !important;
++}
++.price-label {
++  font-size: 11px !important;
++  padding-top: 2px;
++  font-family: din-2014;
++}
+ </style>
+-
