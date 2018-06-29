@@ -134,21 +134,16 @@ export default {
           this.map.doubleClickZoom.disable();
           this.map.scrollZoom.disable();
           // Set Pitch and Animate On Load
-          this.map.on("load", function() {
-            var d = 3200,
-              t = new Date().getTime();
-            map.flyTo({
-              center: [-97.56653308868408, 32.73660607970235],
+          setTimeout(_ => {
+            this.map.easeTo({
+              duration: 3200,
               pitch: 45,
-              bearing: 0.5,
-              duration: d,
-              zoom: 15.78
-              // easing: function easing(t) {
-              //   return t * (2 - t);
-              // }
+              bearing: 1,
+              easing: function easing(t) {
+                return t * (2 - t);
+              }
             });
-          });
-
+          }, 500);
           this.map.on("load", this.mapLoad);
         });
       }
