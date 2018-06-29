@@ -113,16 +113,16 @@ export default {
           this.map.addControl(new mapboxgl.NavigationControl())
           this.map.doubleClickZoom.disable()
           this.map.scrollZoom.disable()
-          setTimeout(_ => {
-            this.map.easeTo({
-              duration: 3200,
-              pitch: 45,
-              bearing: 1,
-              easing: function easing(t) {
-                return t * (2 - t);
-              }
-            })
-          }, 500)
+          // setTimeout(_ => {
+          //   this.map.easeTo({
+          //     duration: 3200,
+          //     pitch: 45,
+          //     bearing: 1,
+          //     easing: function easing(t) {
+          //       return t * (2 - t);
+          //     }
+          //   })
+          // }, 500)
           this.map.on('load', this.mapLoad)
         })
       }
@@ -246,7 +246,7 @@ export default {
             new this.popup({ propsData: { record: this.lot }}).$mount('#popup-content')
           }
         }
-
+        eventBus.$emit('scrollTo', this.lot_id)
         this.map.getCanvas().style.cursor = 'pointer'
       })
 
