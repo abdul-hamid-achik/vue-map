@@ -33,8 +33,30 @@ export default {
     }
   },
   methods: {
+    shouldShow(data) {
+      if (!data.builder) {
+        return false
+      }
+
+      switch(data.status) {
+        case 'Sold':
+          return false
+        break;
+
+        case 'Reserverd':
+          return false
+        break;
+
+        case 'Closed':
+          return false
+        break;
+      }
+      return true
+    },
     clickHandler() {
-      eventBus.$emit('showSidePanel', this.record)
+        if (this.shouldShow(this.record)) {
+          eventBus.$emit('showSidePanel', this.record)
+        }
     },
     mouseOverHandler() {
         eventBus.$emit('homeHovered', this.record)

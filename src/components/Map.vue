@@ -240,10 +240,12 @@ export default {
         if (this.lot_id != event.features[0].properties.id) {
           this.lot_id  = event.features[0].properties.id
           this.lot = this.records.find(item => item.id === this.lot_id)
-          if (this.lot.status == 'Sold' || this.lot.status == 'Closed'  || this.lot.status == 'Reserved' || !this.lot.builder) {
+          if (this.shouldShow(this.lot)) {
             this.mapboxPopup
               .setHTML('<div id="popup-content"></div>').addTo(this.map)
             new this.popup({ propsData: { record: this.lot }}).$mount('#popup-content')
+          } else {
+            this.mapboxPopup.remove()
           }
         }
         eventBus.$emit('scrollTo', this.lot_id)
@@ -251,16 +253,11 @@ export default {
       })
 
       this.map.on("mouseleave", "shape", (e) => {
-        this.map.setFilter("hover", ["==", "id", ''])
-        this.map.getCanvas().style.cursor = ''
         this.lot_id = null,
         this.lot = {}
         this.mapboxPopup.remove()
-      })
-
-      this.map.on("mousemove", "hover", (e) => {
-        this.map.getCanvas().style.cursor = "pointer"
-
+        this.map.setFilter("hover", ["==", "id", ''])
+        this.map.getCanvas().style.cursor = ''
       })
 
       this.map.on("click", "shape", (e) => {
@@ -272,13 +269,33 @@ export default {
               return record
           }
         })[0]
-
-        if (data.status == 'Sold' || data.status == 'Closed'  || data.status == 'Reserved' || !data.builder) {
-          return
+        
+        if (this.shouldShow(data)) {
+          eventBus.$emit('showSidePanel', data)
         }
 
-        eventBus.$emit('showSidePanel', data)
       })
+    },
+    shouldShow(data) {
+      if (!data.builder) {
+        console.log(!data.builder)
+        return false
+      }
+      console.log(data.status)
+      switch(data.status) {
+        case 'Sold':
+          return false
+        break;
+
+        case 'Reserverd':
+          return false
+        break;
+
+        case 'Closed':
+          return false
+        break;
+      }
+      return true
     },
     clearSourcesAndLayers() {
       var layersCopy = config.layers.slice(0)
