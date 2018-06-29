@@ -7,24 +7,25 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import config from '@/config'
-import {eventBus} from '../main'
-import MapTooltip from './MapTooltip'
-import mapboxgl from 'mapbox-gl'
+import Vue from "vue";
+import config from "@/config";
+import { eventBus } from "../main";
+import MapTooltip from "./MapTooltip";
+import mapboxgl from "mapbox-gl";
 export default {
-  props: ['records', 'filteredRecords', 'totalLength', 'viewType'],
-  name: 'Map',
+  props: ["records", "filteredRecords", "totalLength", "viewType"],
+  name: "Map",
 
-  data () {
+  data() {
     return {
       modifiedRecords: [],
-      token: config.token,
+      token: config.mapsettings.token,
       mapOptions: {
-        container: 'map',
-        style: config.style,
-        center: config.center,
-        zoom: config.zoom
+        container: config.mapsettings.container,
+        style: config.mapsettings.style,
+        center: config.mapsettings.map_center,
+        zoom: config.mapsettings.zoom,
+        pitch: config.mapsettings.pitch
       },
       lot: null,
       lot_id: null,
@@ -35,381 +36,437 @@ export default {
       mapboxPopup: new mapboxgl.Popup({
         closeButton: false,
         closeOnClick: false,
-        offset: (0, 5),
+        offset: (0, 5)
       }),
       filterTimeout: null
-    }
+    };
   },
-
 
   created() {
-    this.mapboxPopup.setHTML('<div id="popup-content"></div>')
+    this.mapboxPopup.setHTML('<div id="popup-content"></div>');
     eventBus.$on("requestFullscreen", _ => {
-      this.map.getCanvas().webkitRequestFullScreen()
-      this.map.resize()
-    })
-    eventBus.$on("homeHovered", (record) => {
-      if (!this.viewType == 'mapViewActive') {
-        return
+      this.map.getCanvas().webkitRequestFullScreen();
+      this.map.resize();
+    });
+    eventBus.$on("homeHovered", record => {
+      if (!this.viewType == "mapViewActive") {
+        return;
       }
-      this.clearMapSelection()
-      var center = [].concat(record.centerpoint)
+      this.clearMapSelection();
+      var center = [].concat(record.centerpoint);
 
       this.map.flyTo({
-          center: center.reverse(),
-          zoom: 15.5
-      })
+        center: center.reverse(),
+        zoom: 16.5
+      });
+      // No clue what this was for
+      // let border = config.css.border;
+      // let shape = config.css.shape;
 
-      let border = config.css.border
-      let shape = config.css.shape
-
-      border["line-color"] = "#666666"
-      border["line-width"] = 0.9
-      shape["fill-color"] = "#2C4E67"
-      shape["fill-opacity"] = 0.5
+      // border["line-color"] = "red";
+      // border["line-width"] = 1;
+      // shape["fill-color"] = "red";
+      // shape["fill-opacity"] = 0.9;
 
       this.currentlySelectedLayer = {
-          shape: {
-              id: record.id + "_{timestamp}_shape".replace("{timestamp}", Date.now()),
-              type: "fill",
-              source: {
-                  type: "geojson",
-                  data: this.generateFeature(record)
-              },
-              paint: shape
+        // Thumbnail Rollover Fill Color for map hover indication
+        shape: {
+          id:
+            record.id + "_{timestamp}_shape".replace("{timestamp}", Date.now()),
+          type: "fill",
+          source: {
+            type: "geojson",
+            data: this.generateFeature(record)
           },
-          border: {
-              id: record.id + "_{timestamp}_border".replace("{timestamp}", Date.now()),
-              type: "line",
-              source: {
-                  type: "geojson",
-                  data: this.generateFeature(record)
-              },
-              paint: border
+          paint: {
+            "fill-color": config.action_tmb_hover.fill_color,
+            "fill-opacity": config.action_tmb_hover.fill_opacity
           }
-      }
-      this.layersHistory["instanceBorder"] = this.map.addLayer(this.currentlySelectedLayer.border)
-      this.layersHistory["instanceShape"] = this.map.addLayer(this.currentlySelectedLayer.shape)
-
-    })
-    eventBus.$on("homeUnhovered", (data) => {
-      this.clearMapSelection()
-    })
-    eventBus.$on('unselectedOption', function () {
-      this.clearFilteredLotsFromMap()
-    }.bind(this))
-    eventBus.$on("clearAllFilters", function () {
-      this.clearFilteredLotsFromMap()
-    }.bind(this))
+        },
+        // Thumbnail Rollover Line Color for map hover indication
+        border: {
+          id:
+            record.id +
+            "_{timestamp}_border".replace("{timestamp}", Date.now()),
+          type: "line",
+          source: {
+            type: "geojson",
+            data: this.generateFeature(record)
+          },
+          paint: {
+            "line-color": config.action_tmb_hover.line_color,
+            "line-width": config.action_tmb_hover.line_width
+          }
+        }
+      };
+      this.layersHistory["instanceBorder"] = this.map.addLayer(
+        this.currentlySelectedLayer.border
+      );
+      this.layersHistory["instanceShape"] = this.map.addLayer(
+        this.currentlySelectedLayer.shape
+      );
+    });
+    eventBus.$on("homeUnhovered", data => {
+      this.clearMapSelection();
+    });
+    eventBus.$on(
+      "unselectedOption",
+      function() {
+        this.clearFilteredLotsFromMap();
+      }.bind(this)
+    );
+    eventBus.$on(
+      "clearAllFilters",
+      function() {
+        this.clearFilteredLotsFromMap();
+      }.bind(this)
+    );
   },
-  
+
   watch: {
-    viewType: function (newData, oldData) {
-      if (newData == 'mapViewActive') {
+    viewType: function(newData, oldData) {
+      if (newData == "mapViewActive") {
         this.$nextTick(_ => {
-          mapboxgl.accessToken = config.token
-          var map = new mapboxgl.Map(config)
-          this.map = map
-          this.map.addControl(new mapboxgl.NavigationControl())
-          this.map.doubleClickZoom.disable()
-          this.map.scrollZoom.disable()
-          // setTimeout(_ => {
-          //   this.map.easeTo({
-          //     duration: 3200,
-          //     pitch: 45,
-          //     bearing: 1,
-          //     easing: function easing(t) {
-          //       return t * (2 - t);
-          //     }
-          //   })
-          // }, 500)
-          this.map.on('load', this.mapLoad)
-        })
+          mapboxgl.accessToken = config.token;
+          var map = new mapboxgl.Map(config);
+          this.map = map;
+          this.map.addControl(new mapboxgl.NavigationControl());
+          this.map.doubleClickZoom.disable();
+          this.map.scrollZoom.disable();
+          // Set Pitch and Animate On Load
+          this.map.on("load", function() {
+            var d = 3200,
+              t = new Date().getTime();
+            map.flyTo({
+              center: [-97.56653308868408, 32.73660607970235],
+              pitch: 45,
+              bearing: 0.5,
+              duration: d,
+              zoom: 15.78
+              // easing: function easing(t) {
+              //   return t * (2 - t);
+              // }
+            });
+          });
+
+          this.map.on("load", this.mapLoad);
+        });
       }
     },
-    records: function (newData, oldData) {
-      this.modifiedRecords = this.modifyRecords(newData)
+    records: function(newData, oldData) {
+      this.modifiedRecords = this.modifyRecords(newData);
     },
-    filteredRecords: function (newData, oldData) {
+    filteredRecords: function(newData, oldData) {
       if (newData.length == this.records.length) {
-        return
+        return;
       }
-      this.clearFilteredLotsFromMap()
+      this.clearFilteredLotsFromMap();
       if (this.filterTimeout) {
-        clearTimeout(this.filterTimeout)
+        clearTimeout(this.filterTimeout);
       }
       this.filterTimeout = setTimeout(_ => {
-        var params = this.generateMapData(this.filteredRecords)
-        this.map.addSource('filtered-records', params)
+        var params = this.generateMapData(this.filteredRecords);
+        this.map.addSource("filtered-records", params);
+        // Filtered Records Border Color
         var shape = {
-          id: 'filtered-records-fill',
-          source: 'filtered-records',
-          type: 'fill',
+          id: "filtered-records-fill",
+          source: "filtered-records",
+          type: "fill",
           paint: {
-            "fill-color": "blue",
-            "fill-opacity": 0.9
+            "fill-color": config.filtered.fill_color,
+            "fill-opacity": config.filtered.fill_opacity
           }
-        }
+        };
+        // Filtered Records Border Color
         var border = {
-          id: 'filtered-records-border',
-          source: 'filtered-records',
-          type: 'line',
+          id: "filtered-records-border",
+          source: "filtered-records",
+          type: "line",
           paint: {
-            "line-color": "#99998f",
-            "line-width": 0.9
+            "line-color": config.filtered.line_color,
+            "line-width": config.filtered.line_width
           }
-        }
-        this.map.addLayer(shape)
-        this.map.addLayer(border)
-      }, 300)
+        };
+        this.map.addLayer(shape);
+        this.map.addLayer(border);
+      }, 300);
     }
   },
 
   methods: {
     clearFilteredLotsFromMap() {
-      if (this.map && this.map.getSource('filtered-records')) {
-        this.map.removeLayer('filtered-records-fill')
-        this.map.removeLayer('filtered-records-border')
-        this.map.removeSource('filtered-records')
+      if (this.map && this.map.getSource("filtered-records")) {
+        this.map.removeLayer("filtered-records-fill");
+        this.map.removeLayer("filtered-records-border");
+        this.map.removeSource("filtered-records");
       }
     },
     generateMapData(records) {
-      var recordsList = records.slice(0)
-      var features = []
+      var recordsList = records.slice(0);
+      var features = [];
       var data = {
-          type: "FeatureCollection",
-          features: features
-      }
+        type: "FeatureCollection",
+        features: features
+      };
       for (var i = 0; i < recordsList.length; i++) {
-        features.push(
-          this.generateFeature(recordsList[i])
-        )
+        features.push(this.generateFeature(recordsList[i]));
       }
       return {
         type: "geojson",
         data: data
-      }      
+      };
     },
     mapLoad(event) {
-      var params = this.generateMapData(this.records)
+      var params = this.generateMapData(this.records);
+      // Map lighting - Move in to config later
       this.map.setLight({
-          color: "#fff",
-          intensity: 0.5,
-          position: [1.15, 135, 45]
-      })
-      this.map.addSource('records', params)
-      this.clearSourcesAndLayers()
-      this.addOtherSources()
-      this.addOtherLayers()
+        color: "#fff",
+        intensity: 0.5,
+        position: [1.15, 135, 45]
+      });
+      this.map.addSource("records", params);
+      this.clearSourcesAndLayers();
+      this.addOtherSources();
+      this.addOtherLayers();
       this.map.addLayer({
+        // Correct Sold or Closed Homes
         id: "sold",
         source: this.getAllSoldLots(params),
-        type: 'fill',
+        type: "fill",
         paint: {
-          'fill-color': config.colors.sold,
-          'fill-opacity': 0.9
+          "fill-color": config.status_sold.fill_color,
+          "fill-opacity": config.status_sold.fill_opacity,
+          "fill-outline-color": config.status_sold.outline_color
         }
-      })
+      });
       this.map.addLayer({
+        // Available Homes/Specs
         id: "spec",
         source: this.getAllSpecLots(params),
-        type: 'fill',
+        type: "fill",
         paint: {
-          'fill-color': config.colors.spec,
-          'fill-opacity': 0.9
+          "fill-color": config.status_spec.fill_color,
+          "fill-opacity": config.status_spec.fill_opacity,
+          "fill-outline-color": config.status_spec.outline_color
         }
-      })
+      });
+      // Reserved Lots - Model Homes
       this.map.addLayer({
         id: "reserved",
         source: this.getAllReservedLots(params),
-        type: 'fill',
+        type: "fill",
         paint: {
-          'fill-color': config.colors.reserved,
-          'fill-opacity': 0.9
+          "fill-color": config.status_reserved.fill_color,
+          "fill-opacity": config.status_reserved.fill_opacity,
+          "fill-outline-color": config.status_reserved.outline_color
         }
-      })
-      this.bindEvents()
+      });
+      this.bindEvents();
     },
 
- 
-
     bindEvents() {
-      this.map.on("mousemove", "shape", (event) => {
-        this.map.setFilter("hover", ["==", "id", event.features[0].properties.id])
-        this.mapboxPopup.setLngLat(event.lngLat)
+      this.map.on("mousemove", "shape", event => {
+        this.map.setFilter("hover", [
+          "==",
+          "id",
+          event.features[0].properties.id
+        ]);
+        this.mapboxPopup.setLngLat(event.lngLat);
         if (this.lot_id != event.features[0].properties.id) {
-          this.lot_id  = event.features[0].properties.id
-          this.lot = this.records.find(item => item.id === this.lot_id)
-          if (this.lot.status == 'Sold' || this.lot.status == 'Closed'  || this.lot.status == 'Reserved' || !this.lot.builder) {
+          this.lot_id = event.features[0].properties.id;
+          this.lot = this.records.find(item => item.id === this.lot_id);
+          if (
+            this.lot.status == "Sold" ||
+            this.lot.status == "Closed" ||
+            this.lot.status == "Reserved" ||
+            !this.lot.builder
+          ) {
             this.mapboxPopup
-              .setHTML('<div id="popup-content"></div>').addTo(this.map)
-            new this.popup({ propsData: { record: this.lot }}).$mount('#popup-content')
+              .setHTML('<div id="popup-content"></div>')
+              .addTo(this.map);
+            new this.popup({ propsData: { record: this.lot } }).$mount(
+              "#popup-content"
+            );
           }
         }
-        eventBus.$emit('scrollTo', this.lot_id)
-        this.map.getCanvas().style.cursor = 'pointer'
-      })
+        eventBus.$emit("scrollTo", this.lot_id);
+        this.map.getCanvas().style.cursor = "pointer";
+      });
 
-      this.map.on("mouseleave", "shape", (e) => {
-        this.map.setFilter("hover", ["==", "id", ''])
-        this.map.getCanvas().style.cursor = ''
-        this.lot_id = null,
-        this.lot = {}
-        this.mapboxPopup.remove()
-      })
+      this.map.on("mouseleave", "shape", e => {
+        this.map.setFilter("hover", ["==", "id", ""]);
+        this.map.getCanvas().style.cursor = "";
+        (this.lot_id = null), (this.lot = {});
+        this.mapboxPopup.remove();
+      });
 
-      this.map.on("mousemove", "hover", (e) => {
-        this.map.getCanvas().style.cursor = "pointer"
-
-      })
-
-      this.map.on("click", "shape", (e) => {
-        var properties = e.features[0].properties
-        var id = properties.id
+      this.map.on("mousemove", "hover", e => {
+        this.map.getCanvas().style.cursor = "pointer";
+      });
+      // Hover Indication Style assigned to "Shape in Config - Horrible name fix later"
+      this.map.on("click", "shape", e => {
+        var properties = e.features[0].properties;
+        var id = properties.id;
 
         var data = this.records.filter(function(record) {
           if (record.id == id) {
-              return record
+            return record;
           }
-        })[0]
+        })[0];
 
-        if (data.status == 'Sold' || data.status == 'Closed'  || data.status == 'Reserved' || !data.builder) {
-          return
+        if (
+          data.status == "Sold" ||
+          data.status == "Closed" ||
+          data.status == "Reserved" ||
+          !data.builder
+        ) {
+          return;
         }
 
-        eventBus.$emit('showSidePanel', data)
-      })
+        eventBus.$emit("showSidePanel", data);
+      });
     },
     clearSourcesAndLayers() {
-      var layersCopy = config.layers.slice(0)
-      layersCopy.map((layer) => {
+      var layersCopy = config.layers.slice(0);
+      layersCopy.map(layer => {
         if (this.map.getLayer(layer["id"])) {
-          this.map.removeLayer(layer["id"])
+          this.map.removeLayer(layer["id"]);
         }
-      })
+      });
 
-      var sourcesCopy = config.sources.slice(0)
-      config.sources.map((source) => {
+      var sourcesCopy = config.sources.slice(0);
+      config.sources.map(source => {
         if (this.map.getSource(source["id"])) {
-          this.map.removeSource(source["id"])
+          this.map.removeSource(source["id"]);
         }
-      })
+      });
     },
     addOtherSources() {
-      var configCopy = config.sources.slice(0)
-      configCopy.map((source) => {
-        var sourceId = source["id"]
+      var configCopy = config.sources.slice(0);
+      configCopy.map(source => {
+        var sourceId = source["id"];
         var params = {
           type: source.type,
           data: source.data
-        }
-        this.map.addSource(sourceId, params)
-      })
+        };
+        this.map.addSource(sourceId, params);
+      });
     },
     addOtherLayers() {
-      var configCopy = config.layers.slice(0)
-      configCopy.map((layer) => {
-        this.map.addLayer(layer)
-      })
+      var configCopy = config.layers.slice(0);
+      configCopy.map(layer => {
+        this.map.addLayer(layer);
+      });
     },
-    prettyPrice (price) {
-      return "$" + price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    prettyPrice(price) {
+      return "$" + price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
-    modifyRecords (records) {
-      var data = []
+    modifyRecords(records) {
+      var data = [];
       for (var i = 0; i < records.length; i++) {
-        var record = records[i]
+        var record = records[i];
         if (record.sqft) {
-            record.prettySqft = record.sqft.toLocaleString()
+          record.prettySqft = record.sqft.toLocaleString();
         }
 
         if (!record.price || record.price === 1 || record.price === 250000) {
-            record.price = 250000
+          record.price = 250000;
         }
-        
-        record.prettyPrice = this.prettyPrice(record.price)
-        record.model = (record.status == "Reserved") ? true : false
 
-        data.push(record)
+        record.prettyPrice = this.prettyPrice(record.price);
+        record.model = record.status == "Reserved" ? true : false;
+
+        data.push(record);
       }
 
-      return data
+      return data;
     },
 
-    clearMapSelection () {
+    clearMapSelection() {
       if (this.currentlySelectedLayer) {
-        if (this.map.getLayer(this.currentlySelectedLayer.border.id) && this.map.getLayer(this.currentlySelectedLayer.shape.id)) {
-            this.map.removeLayer(this.currentlySelectedLayer.border.id)
-            this.map.removeLayer(this.currentlySelectedLayer.shape.id)
-            delete this.layersHistory["instanceBorder"]
-            delete this.layersHistory["instanceShape"]
-            this.currentlySelectedLayer = null
+        if (
+          this.map.getLayer(this.currentlySelectedLayer.border.id) &&
+          this.map.getLayer(this.currentlySelectedLayer.shape.id)
+        ) {
+          this.map.removeLayer(this.currentlySelectedLayer.border.id);
+          this.map.removeLayer(this.currentlySelectedLayer.shape.id);
+          delete this.layersHistory["instanceBorder"];
+          delete this.layersHistory["instanceShape"];
+          this.currentlySelectedLayer = null;
         }
       }
     },
 
-    generateFeature (record) {
-      var coordinates = this.cleanupCoordinates(record.polygon)
-      var xy = record.centerpoint.slice(0).reverse()
+    generateFeature(record) {
+      var coordinates = this.cleanupCoordinates(record.polygon);
+      var xy = record.centerpoint.slice(0).reverse();
       return {
         type: "Feature",
         properties: {
-            id: record.id,
-            sku: record.sku,
-            color: record.color,
-            xy: xy,
-            status: record.status
+          id: record.id,
+          sku: record.sku,
+          // color: record.color,
+          xy: xy,
+          status: record.status
         },
         geometry: {
-            type: "Polygon",
-            coordinates: coordinates
+          type: "Polygon",
+          coordinates: coordinates
         }
-      }
+      };
     },
-    cleanupCoordinates (polygon) {
-      var coordinates = []
-      var coordinatesList = polygon[0]
+    cleanupCoordinates(polygon) {
+      var coordinates = [];
+      var coordinatesList = polygon[0];
       for (var j = 0; j < coordinatesList.length; j++) {
-          coordinates.push(coordinatesList[j].map(item => String(item)).reverse())
+        coordinates.push(
+          coordinatesList[j].map(item => String(item)).reverse()
+        );
       }
-      return [coordinates]
+      return [coordinates];
     },
     getAllSoldLots(params) {
       var result = {
-        'type': 'geojson',
-        'data': {
-          "type": "FeatureCollection",
-          "features": params.data.features.filter(record => record.properties.status == 'Sold').filter(record => record)
+        type: "geojson",
+        data: {
+          type: "FeatureCollection",
+          features: params.data.features
+            .filter(record => record.properties.status == "Sold")
+            .filter(record => record)
         }
-      }
-      return result
+      };
+      return result;
     },
     getAllSpecLots(params) {
       var result = {
-        'type': 'geojson',
-        'data': {
-          "type": "FeatureCollection",
-          "features": params.data.features.filter(record => record.properties.status == 'Spec').filter(record => record)
+        type: "geojson",
+        data: {
+          type: "FeatureCollection",
+          features: params.data.features
+            .filter(record => record.properties.status == "Spec")
+            .filter(record => record)
         }
-      }
-      return result
+      };
+      return result;
     },
     getAllReservedLots(params) {
       var result = {
-        'type': 'geojson',
-        'data': {
-          "type": "FeatureCollection",
-          "features": params.data.features.filter(record => record.properties.status == 'Reserved').filter(record => record)
+        type: "geojson",
+        data: {
+          type: "FeatureCollection",
+          features: params.data.features
+            .filter(record => record.properties.status == "Reserved")
+            .filter(record => record)
         }
-      }
-      return result
-    },
+      };
+      return result;
+    }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
-  #map {
-    height: calc(100vh - 102px);
-  }
+#map {
+  height: calc(100vh - 102px);
+}
 </style>
