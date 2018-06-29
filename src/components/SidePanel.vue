@@ -39,7 +39,7 @@
                 <span class="label-small">Overview</span>
                 <div class="data-text">
                   <p class="description">
-                    {{ record.builder.description }}
+                    {{ record.description }}
                   </p>
                 </div>
               </div>
