@@ -113,6 +113,16 @@ export default {
           this.map.addControl(new mapboxgl.NavigationControl())
           this.map.doubleClickZoom.disable()
           this.map.scrollZoom.disable()
+          setTimeout(_ => {
+            this.map.easeTo({
+              duration: 3200,
+              pitch: 45,
+              bearing: 1,
+              easing: function easing(t) {
+                return t * (2 - t);
+              }
+            })
+          }, 500)
           this.map.on('load', this.mapLoad)
         })
       }
@@ -225,19 +235,23 @@ export default {
 
     bindEvents() {
       this.map.on("mousemove", "shape", (event) => {
+        this.map.setFilter("hover", ["==", "id", event.features[0].properties.id])
         this.mapboxPopup.setLngLat(event.lngLat)
         if (this.lot_id != event.features[0].properties.id) {
           this.lot_id  = event.features[0].properties.id
           this.lot = this.records.find(item => item.id === this.lot_id)
-          this.mapboxPopup
-            .setHTML('<div id="popup-content"></div>').addTo(this.map)
-          new this.popup({ propsData: { record: this.lot }}).$mount('#popup-content')
+          if (this.lot.status == 'Sold' || this.lot.status == 'Closed'  || this.lot.status == 'Reserved' || !this.lot.builder) {
+            this.mapboxPopup
+              .setHTML('<div id="popup-content"></div>').addTo(this.map)
+            new this.popup({ propsData: { record: this.lot }}).$mount('#popup-content')
+          }
         }
 
         this.map.getCanvas().style.cursor = 'pointer'
       })
 
       this.map.on("mouseleave", "shape", (e) => {
+        this.map.setFilter("hover", ["==", "id", ''])
         this.map.getCanvas().style.cursor = ''
         this.lot_id = null,
         this.lot = {}
@@ -259,7 +273,7 @@ export default {
           }
         })[0]
 
-        if (data.status == 'Closed' || data.status == "Sold") {
+        if (data.status == 'Sold' || data.status == 'Closed'  || data.status == 'Reserved' || !data.builder) {
           return
         }
 
