@@ -269,7 +269,7 @@ export default {
               return record
           }
         })[0]
-        
+
         if (this.shouldShow(data)) {
           eventBus.$emit('showSidePanel', data)
         }
@@ -396,7 +396,9 @@ export default {
         'type': 'geojson',
         'data': {
           "type": "FeatureCollection",
-          "features": params.data.features.filter(record => record.properties.status == 'Sold').filter(record => record)
+          "features": params.data.features.filter(
+            record => record.properties.status == 'Sold' || record.properties.status == 'Closed'
+          ).filter(record => record)
         }
       }
       return result
