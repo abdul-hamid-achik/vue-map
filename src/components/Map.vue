@@ -59,6 +59,9 @@ export default {
         center: center.reverse(),
         zoom: 16.5
       });
+      let border = config.css.border;
+      let shape = config.css.shape;
+
       // No clue what this was for
       // let border = config.css.border;
       // let shape = config.css.shape;
@@ -137,13 +140,26 @@ export default {
           setTimeout(_ => {
             this.map.easeTo({
               duration: 3200,
+          this.map.scrollZoom.disable();
+          this.map.on("load", function() {
+            var d = 3200,
+              t = new Date().getTime();
+            map.flyTo({
+              center: [-97.56653308868408, 32.73660607970235],
               pitch: 45,
               bearing: 1,
               easing: function easing(t) {
                 return t * (2 - t);
               }
+              duration: d,
+              zoom: 15.78
+              // easing: function easing(t) {
+              //   return t * (2 - t);
+              // }
             });
           }, 500);
+          });
+
           this.map.on("load", this.mapLoad);
         });
       }
@@ -151,6 +167,7 @@ export default {
     records: function(newData, oldData) {
       this.modifiedRecords = this.modifyRecords(newData);
     },
+    // Filtered Records Border Color
     filteredRecords: function(newData, oldData) {
       if (newData.length == this.records.length) {
         return;
@@ -254,6 +271,8 @@ export default {
           "fill-color": config.status_reserved.fill_color,
           "fill-opacity": config.status_reserved.fill_opacity,
           "fill-outline-color": config.status_reserved.outline_color
+          "fill-color": config.colors.reserved,
+          "fill-opacity": 0.9
         }
       });
       this.bindEvents();
@@ -276,12 +295,16 @@ export default {
             this.lot.status == "Reserved" ||
             !this.lot.builder
           ) {
+
+          if (this.shouldShow(this.lot)) {
             this.mapboxPopup
               .setHTML('<div id="popup-content"></div>')
               .addTo(this.map);
             new this.popup({ propsData: { record: this.lot } }).$mount(
               "#popup-content"
             );
+          } else {
+            this.mapboxPopup.remove();
           }
         }
         eventBus.$emit("scrollTo", this.lot_id);
@@ -291,8 +314,11 @@ export default {
       this.map.on("mouseleave", "shape", e => {
         this.map.setFilter("hover", ["==", "id", ""]);
         this.map.getCanvas().style.cursor = "";
+
         (this.lot_id = null), (this.lot = {});
         this.mapboxPopup.remove();
+        this.map.setFilter("hover", ["==", "id", ""]);
+        this.map.getCanvas().style.cursor = "";
       });
 
       this.map.on("mousemove", "hover", e => {
@@ -316,10 +342,33 @@ export default {
           !data.builder
         ) {
           return;
+        if (this.shouldShow(data)) {
+          eventBus.$emit("showSidePanel", data);
         }
 
         eventBus.$emit("showSidePanel", data);
       });
+    },
+    shouldShow(data) {
+      if (!data.builder) {
+        console.log(!data.builder);
+        return false;
+      }
+      console.log(data.status);
+      switch (data.status) {
+        case "Sold":
+          return false;
+          break;
+
+        case "Reserverd":
+          return false;
+          break;
+
+        case "Closed":
+          return false;
+          break;
+      }
+      return true;
     },
     clearSourcesAndLayers() {
       var layersCopy = config.layers.slice(0);
@@ -401,6 +450,7 @@ export default {
           id: record.id,
           sku: record.sku,
           // color: record.color,
+          color: record.color,
           xy: xy,
           status: record.status
         },
@@ -427,6 +477,12 @@ export default {
           type: "FeatureCollection",
           features: params.data.features
             .filter(record => record.properties.status == "Sold")
+          .filter(record => record.properties.status == "Sold")
+            .filter(
+              record =>
+                record.properties.status == "Sold" ||
+                record.properties.status == "Closed"
+            )
             .filter(record => record)
         }
       };
