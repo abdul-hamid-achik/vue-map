@@ -19,13 +19,12 @@ export default {
   data() {
     return {
       modifiedRecords: [],
-      token: config.mapsettings.token,
+      // token: config.token,
       mapOptions: {
-        container: config.mapsettings.container,
-        style: config.mapsettings.style,
-        center: config.mapsettings.map_center,
-        zoom: config.mapsettings.zoom,
-        pitch: config.mapsettings.pitch
+        // container: "map",
+        // style: config.mapsettings.style,
+        // center: config.center,
+        // zoom: config.zoom
       },
       lot: null,
       lot_id: null,
@@ -53,16 +52,20 @@ export default {
         return;
       }
       this.clearMapSelection();
-      var center = [].concat(record.centerpoint);
+      var center = [].concat(record.centerpoint); //Lot Centerpoint
 
       this.map.flyTo({
-        center: center.reverse(),
-        zoom: 15.5
+        center: center.reverse(), //The centerpoint of the lot
+        bearing: config.animateOnHover.bearing,
+        curve: config.animateOnHover.curve,
+        pitch: config.animateOnHover.pitch,
+        speed: config.animateOnHover.speed,
+        zoom: config.animateOnHover.zoom
       });
+      // Still not sure if this is supposed be used or not
+      let border = config.layers.border;
+      let shape = config.layers.shape;
 
-      // let border = config.css.border;
-      // let shape = config.css.shape;
-      //
       // border["line-color"] = "#666666";
       // border["line-width"] = 0.9;
       // shape["fill-color"] = "#2C4E67";
@@ -79,7 +82,8 @@ export default {
           },
           paint: {
             "fill-color": config.action_tmb_hover.fill_color,
-            "fill-opacity": config.action_tmb_hover.fill_opacity
+            "fill-opacity": config.action_tmb_hover.fill_opacity,
+            "fill-outline-color": config.action_tmb_hover.outline_color
           }
         },
         border: {
@@ -106,6 +110,15 @@ export default {
     });
     eventBus.$on("homeUnhovered", data => {
       this.clearMapSelection();
+
+      this.map.flyTo({
+        center: config.animateMap.center, // back to center of default map
+        bearing: config.animateUnhovered.bearing,
+        curve: config.animateUnhovered.curve,
+        pitch: config.animateUnhovered.pitch,
+        speed: config.animateUnhovered.speed,
+        zoom: config.animateUnhovered.zoom
+      });
     });
     eventBus.$on(
       "unselectedOption",
@@ -125,26 +138,30 @@ export default {
     viewType: function(newData, oldData) {
       if (newData == "mapViewActive") {
         this.$nextTick(_ => {
-          mapboxgl.accessToken = config.token;
-          var map = new mapboxgl.Map(config);
+          // Mapbox Access Token Setting
+          mapboxgl.accessToken = config.mapOptions.token;
+          // Initial Mapbox Settings
+          var map = new mapboxgl.Map(config.mapOptions);
           this.map = map;
           this.map.addControl(new mapboxgl.NavigationControl());
           this.map.doubleClickZoom.disable();
           this.map.scrollZoom.disable();
-          this.map.on("load", function() {
-            var d = 3200,
-              t = new Date().getTime();
-            map.flyTo({
-              center: [-97.56653308868408, 32.73660607970235],
-              pitch: 45,
-              bearing: 0.5,
-              duration: d,
-              zoom: 15.78
-              // easing: function easing(t) {
-              //   return t * (2 - t);
-              // }
+          setTimeout(_ => {
+            this.map.flyTo({
+              bearing: config.animateMap.bearing,
+              center: config.animateMap.center,
+              curve: config.animateMap.curve,
+              // duration: config.animateMap.duration,
+              pitch: config.animateMap.pitch,
+              speed: config.animateMap.speed,
+              zoom: config.animateMap.zoom,
+              // This can be any easing function: it takes a number between
+              // 0 and 1 and returns another number between 0 and 1.
+              easing: function easing(t) {
+                return t * (2 - t);
+              }
             });
-          });
+          }, 1500);
           this.map.on("load", this.mapLoad);
         });
       }
@@ -163,7 +180,6 @@ export default {
       this.filterTimeout = setTimeout(_ => {
         var params = this.generateMapData(this.filteredRecords);
         this.map.addSource("filtered-records", params);
-        // Filtered Records Border Color
         var shape = {
           id: "filtered-records-fill",
           source: "filtered-records",
@@ -173,7 +189,6 @@ export default {
             "fill-opacity": config.filtered.fill_opacity
           }
         };
-        // Filtered Records Border Color
         var border = {
           id: "filtered-records-border",
           source: "filtered-records",
@@ -215,15 +230,14 @@ export default {
     mapLoad(event) {
       var params = this.generateMapData(this.records);
       this.map.setLight({
-        color: "#fff",
-        intensity: 0.5,
-        position: [1.15, 135, 45]
+        color: config.mapLighting.color,
+        intensity: config.mapLighting.intensity,
+        position: config.mapLighting.position
       });
       this.map.addSource("records", params);
       this.clearSourcesAndLayers();
       this.addOtherSources();
       this.addOtherLayers();
-      // Correct Sold or Closed Homes
       this.map.addLayer({
         id: "sold",
         source: this.getAllSoldLots(params),
@@ -234,7 +248,6 @@ export default {
           "fill-outline-color": config.status_sold.outline_color
         }
       });
-      // Available Homes/Specs
       this.map.addLayer({
         id: "spec",
         source: this.getAllSpecLots(params),
@@ -245,7 +258,6 @@ export default {
           "fill-outline-color": config.status_spec.outline_color
         }
       });
-      // Reserved Lots - Model Homes
       this.map.addLayer({
         id: "reserved",
         source: this.getAllReservedLots(params),
@@ -270,7 +282,6 @@ export default {
         if (this.lot_id != event.features[0].properties.id) {
           this.lot_id = event.features[0].properties.id;
           this.lot = this.records.find(item => item.id === this.lot_id);
-
           if (this.shouldShow(this.lot)) {
             this.mapboxPopup
               .setHTML('<div id="popup-content"></div>')
@@ -290,9 +301,9 @@ export default {
         (this.lot_id = null), (this.lot = {});
         this.mapboxPopup.remove();
         this.map.setFilter("hover", ["==", "id", ""]);
-        this.map.getCanvas().style.cursor = "";
+        this.map.getCanvas().style.cursor = "default";
       });
-
+      // Hover Indication Style assigned to "Shape in Config - Horrible name fix later"
       this.map.on("click", "shape", e => {
         var properties = e.features[0].properties;
         var id = properties.id;
@@ -412,6 +423,7 @@ export default {
           xy: xy,
           status: record.status
         },
+
         geometry: {
           type: "Polygon",
           coordinates: coordinates

@@ -1,83 +1,75 @@
 export default {
   center: [-97.566735, 32.740584],
-  // css: {
-  //   shape: {
-  //     "fill-color": "white",
-  //     "fill-opacity": 0.9
-  //   },
-  //   border: {
-  //     "line-color": "white",
-  //     "line-width": 1
-  //   },
-  //   hover: {
-  //     "fill-color": "white",
-  //     "fill-opacity": 0.9
-  //   },
-  //   disabled: {
-  //     "fill-color": "white",
-  //     "fill-opacity": 0.9
-  //   }
-  // },
-  center_lat: 32.740288,
-  center_lon: -97.568164,
-  mapsettings: {
+  //Initial map animation loading
+  animateMap: {
+    bearing: 0, //Ending Camera postion North 0
+    center: [-97.56653308868408, 32.73660607970235], //Controls the ending camera position
+    curve: 1.42, // change the speed at which it zooms out
+    // duration: 6200, //The animation's duration, measured in milliseconds.
+    pitch: 45,
+    speed: 0.6, // make the flying slow
+    zoom: 15.78 //Ending Camera zoom
+  },
+  //Animation map on Thumnail hover
+  animateOnHover: {
+    bearing: 0, //Ending Camera postion North 0
+    curve: 1.42, // change the speed at which it zooms out
+    pitch: 45,
+    speed: 0.6, // make the flying slow
+    zoom: 18 //Ending Camera zoom
+  },
+  //Animatie back to inital loaded map position
+  animateUnhovered: {
+    bearing: 0, //Ending Camera postion North 0
+    curve: 1.42, // change the speed at which it zooms out
+    pitch: 45,
+    speed: 0.6, // make the flying slow
+    zoom: 15.78 // Set to the initial map zoom
+  },
+  mapLighting: {
+    color: "#fff",
+    intensity: 0.5,
+    position: [1.15, 210, 30]
+  },
+  mapOptions: {
     token:
       "pk.eyJ1IjoiYWxhc3NldHRlciIsImEiOiI3andLQ1MwIn0.1q6yuZJaMCnAW0cm_6vy_A",
     style: "mapbox://styles/alassetter/cjhmhlnua0xqm2skzgg9mu1r9",
-    map_center: [-97.566735, 32.740584],
-    zoom: 15.78,
+    // minZoom: 3,
+    // maxZoom: 16,
+    zoom: 10,
     container: "map",
+    // center: [-97.566735, 32.740584],
+    center: [-97.566, 32.73],
     bearing: 0,
     pitch: 0
   },
-  // colors: {
-  //   available: "white",
-  //   hover: "white",
-  //   reserved: "white",
-  //   sold: "white",
-  //   approved: "white",
-  //   arc: "white",
-  //   closed: "white",
-  //   denied: "white",
-  //   spec: "white",
-  //   pending: "white",
-  //   default: "white",
-  //   highlight: "white"
-  // },
 
+  center_lat: 32.740288,
+  center_lon: -97.568164,
+  //Not sure if these are being used
   description: false,
   lookup_column: "sku",
   search: false,
   shareable: false,
   tiles_loader: true,
   title: false,
-  token:
-    "pk.eyJ1IjoiYWxhc3NldHRlciIsImEiOiI3andLQ1MwIn0.1q6yuZJaMCnAW0cm_6vy_A",
-  zoom: 15,
-  style: "mapbox://styles/alassetter/cjhmhlnua0xqm2skzgg9mu1r9",
-  container: "map",
   // Setting for Thumbnail Rollover - Map Indicatior
   action_tmb_hover: {
     fill_color: "#181F35",
-    fill_opacity: 0.9,
+    fill_opacity: 0.8,
+    outline_color: "#181F35",
     line_color: "#181F35",
     line_width: 1
   },
-  // Setting for Search Indicatiors
-  filtered: {
-    fill_color: "#68AEB9",
-    fill_opacity: 0.9,
-    line_color: "#487981",
-    line_width: 0.9
-  },
-
-  // Sold and Closed are the same
-  status_sold: {
+  // Sold Homes & Homesites
+  status_closed: {
     fill_color: "#e9e9ed",
     fill_opacity: 0.9,
     outline_color: "#999999"
   },
-  status_closed: {
+  // Closed Homes & Homesites
+  status_sold: {
     fill_color: "#e9e9ed",
     fill_opacity: 0.9,
     outline_color: "#999999"
@@ -94,127 +86,64 @@ export default {
     fill_opacity: 0.9,
     outline_color: "#999999"
   },
-
+  // Setting for Search Indicatiors
+  filtered: {
+    fill_color: "#68AEB9",
+    fill_opacity: 0.9,
+    line_color: "#487981",
+    line_width: 0.9
+  },
   sources: [
-    // {
-    //   id: "buildings",
-    //   type: "geojson",
-    //   data: "static/json/buildings.json"
-    // },
-    // {
-    //   id: "education",
-    //   type: "geojson",
-    //   data: "static/json/educationbuildings.json"
-    // },
-    // {
-    //   id: "parks",
-    //   type: "geojson",
-    //   data: "static/json/parks.json"
-    // },
-    // {
-    //   id: "amenities",
-    //   type: "geojson",
-    //   data: "static/json/amenity.json"
-    // },
-    // {
-    //   id: "landplan",
-    //   type: "geojson",
-    //   data: "static/json/landplan.json"
-    // }
+    {
+      id: "buildings",
+      type: "geojson",
+      data: "static/json/walsh-buildings.geojson"
+    },
+    {
+      id: "amenities",
+      type: "geojson",
+      data: "static/json/amenities.geojson"
+    }
   ],
   layers: [
-    // {
-    //   id: "building-fills",
-    //   type: "fill-extrusion",
-    //   source: "buildings",
-    //   paint: {
-    //     "fill-extrusion-color": "hsl(72, 52%, 92%)",
-    //     "fill-extrusion-height": {
-    //       property: "height",
-    //       type: "identity"
-    //     },
-    //     "fill-extrusion-base": {
-    //       property: "base_height",
-    //       type: "identity"
-    //     },
-    //     "fill-extrusion-opacity": 1
-    //   }
-    // },
-    // {
-    //   id: "education-fills",
-    //   type: "fill-extrusion",
-    //   source: "education",
-    //   paint: {
-    //     "fill-extrusion-color": {
-    //       property: "color",
-    //       type: "identity"
-    //     },
-    //     "fill-extrusion-height": {
-    //       property: "height",
-    //       type: "identity"
-    //     },
-    //     "fill-extrusion-base": {
-    //       property: "base_height",
-    //       type: "identity"
-    //     },
-    //     "fill-extrusion-opacity": 1
-    //   }
-    // },
-    // {
-    //   id: "parks-fills",
-    //   type: "fill-extrusion",
-    //   source: "parks",
-    //   paint: {
-    //     "fill-extrusion-color": {
-    //       property: "color",
-    //       type: "identity"
-    //     },
-    //     "fill-extrusion-height": {
-    //       property: "height",
-    //       type: "identity"
-    //     },
-    //     "fill-extrusion-base": {
-    //       property: "base_height",
-    //       type: "identity"
-    //     },
-    //     "fill-extrusion-opacity": 1
-    //   }
-    // },
-    // {
-    //   id: "amenities-extrusion",
-    //   type: "fill-extrusion",
-    //   source: "amenities",
-    //   paint: {
-    //     "fill-extrusion-color": "hsl(72, 52%, 92%)",
-    //     "fill-extrusion-height": {
-    //       property: "height",
-    //       type: "identity"
-    //     },
-    //     "fill-extrusion-base": {
-    //       property: "base_height",
-    //       type: "identity"
-    //     },
-    //     "fill-extrusion-opacity": 1
-    //   }
-    // },
-    // {
-    //   id: "landplan-extrusion",
-    //   type: "fill-extrusion",
-    //   source: "landplan",
-    //   paint: {
-    //     "fill-extrusion-color": "#A2AB96",
-    //     "fill-extrusion-height": {
-    //       property: "height",
-    //       type: "identity"
-    //     },
-    //     "fill-extrusion-base": {
-    //       property: "base_height",
-    //       type: "identity"
-    //     },
-    //     "fill-extrusion-opacity": 0.08
-    //   }
-    // },
-    //All Available Lots/Homes Fill Color Default
+    {
+      id: "3d-buildings",
+      type: "fill-extrusion",
+      source: "buildings",
+      minzoom: 10,
+      paint: {
+        "fill-extrusion-color": ["get", "color"],
+        "fill-extrusion-height": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          15,
+          0,
+          15.05,
+          ["get", "height"]
+        ],
+        "fill-extrusion-base": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          15,
+          0,
+          15.05,
+          ["get", "base_heigh"]
+        ],
+        "fill-extrusion-opacity": 0.9
+      }
+    },
+    {
+      id: "amenities-fills",
+      type: "fill",
+      source: "amenities",
+      paint: {
+        "fill-color": ["get", "color"],
+        "fill-opacity": 0.9,
+        "fill-outline-color": ["get", "color"]
+      }
+    },
     {
       id: "shape",
       source: "records",
@@ -224,17 +153,15 @@ export default {
         "fill-opacity": 0.9
       }
     },
-    //All Available Lots/Homes Outline Default
     {
       id: "border",
       source: "records",
       type: "line",
       paint: {
         "line-color": "#999999",
-        "line-width": 1
+        "line-width": 0.9
       }
     },
-    // Indicates Hover on map rollover.
     {
       id: "hover",
       source: "records",
